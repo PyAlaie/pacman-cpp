@@ -1,3 +1,6 @@
+#ifndef STRUCTS_H 
+#define STRUCTS_H
+
 #include <iostream>
 
 using namespace std;
@@ -16,3 +19,4 @@ struct Status
     char input_direction;
 };
 
+#endif
