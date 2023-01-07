@@ -3,6 +3,7 @@
 #include "structs.h"
 #include <vector>
 #include <conio.h>
+#include <fstream>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ void drawPathFromCondidate(int **&arr, int n, int m, Coords condidate);
 Coords selectRandomCondidate(vector<Coords> condidatePoints);
 vector<Coords> autoCondidateRemove(int **&arr, int n, int m, vector<Coords> condidatePoints);
 bool isTherePathAround(int **arr, Coords point);
+void drawSimpleMaze(int **&arr, int n, int m);
 
 Coords selectRandomPoint(int n, int m){
     srand((unsigned) time(NULL));
@@ -190,4 +192,18 @@ void drawMaze(int **&arr, int n, int m){
         c++;
     }
     
+}
+
+void drawSimpleMaze(int **&arr, int n, int m){
+    ifstream File("sample_maze.txt");
+    string line;
+    int counter = 0;
+    while(getline(File,line)){
+        for(int j = 0; j<28; j++){
+            if(line[j*2] == '1'){
+                arr[counter][j] = 1;
+            }
+        }
+        counter ++;
+    }
 }

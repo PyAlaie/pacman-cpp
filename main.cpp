@@ -2,6 +2,7 @@
 #include <conio.h> 
 #include "config.h"
 #include "structs.h" 
+#include "maze_generator.h"
 
 using namespace std;
 
@@ -140,15 +141,18 @@ char getInput(char current_dir){
 
 int ** initializeMatrix(int n, int m){
     //creating the matrix
-    int ** new_arr = new int*[n];
-    for (int i = 0; i < n; ++i) {
-        new_arr[i] = new int[m];
-        for (int j = 0; j < m; ++j) {
+    int ** new_arr = new int*[29];
+    for (int i = 0; i < 29; ++i) {
+        new_arr[i] = new int[28];
+        for (int j = 0; j < 28; ++j) {
             new_arr[i][j] = 0;
         }
     }
 
+    // drawMaze(new_arr,n,m);
+    drawSimpleMaze(new_arr,n,m);
     drawBorders(new_arr, n,m);  
+    printMatrix(new_arr, n,m);
 
     return new_arr;
 }
@@ -175,7 +179,6 @@ void printMatrix(int **arr, int n, int m){
                 // path
                 cout<<" ";
                 break;
-            
             case 1:
                 // wall
                 cout<<"#";
@@ -183,6 +186,10 @@ void printMatrix(int **arr, int n, int m){
             case 2:
                 // pacman
                 cout<<"*";
+                break;
+            case -1:
+                // condidate
+                cout<<"o";
                 break;
             }
         }
