@@ -3,50 +3,233 @@
 #include "config.h"
 #include "structs.h" 
 #include "maze_generator.h"
+#include "ghost.h"
+#include "pacman.h"	
 
 using namespace std;
 
-int ** initializeMatrix(int n, int m);
-void drawBorders(int **&arr, int n, int m);
-void printMatrix(int **arr, int n, int m);
-char getInput(char current_dir);
-void updatePacmanDirection(int **arr, Status &pacman);
-bool isThereWall(int **arr, Coords coords, char direction);
-void movePacman(int **&arr, Status &pacman);
+void showMenu();
+void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
+void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
+int ** initializeMatrix(int, int);
+void drawBorders(int **&, int, int);
+void printMatrix(int **, int, int, bool&, int);
+char getInput(char);
+//void updatePacmanDirection(int **arr, Status &pacman);
+//bool isThereWall(int **, Coords, char);
+//void movePacman(int **&arr, Status &pacman);
 
 int main(){
-    int n, m;
-    cin >> n >> m;
 
-    // creating the matrix
-    int **mat = initializeMatrix(n,m);
-
-    // adding pacman (randomly :)) to the middle of the map (as a star :))
-    mat[n/2][m/2] = 2; 
-    Coords pacmanCoor;
-    pacmanCoor.i = n/2;
-    pacmanCoor.j = m/2;
-
+    int **map;
+    
     // creating status for pacman
-    Status pacman;
-    pacman.coords = pacmanCoor;
-    pacman.lives = 3;
-    pacman.current_direction = 'd';
-    pacman.input_direction = 'd';
-
-    while(1){
-        pacman.input_direction = getInput(pacman.input_direction);
-        updatePacmanDirection(mat,pacman);
-        movePacman(mat,pacman);
-        system(CLEAR);
-        printMatrix(mat,n,m);
-        usleep(DELAY_TIME);
+    Pacman pacman;
+    
+    //creating ghosts
+    Ghost ghost1;
+    Ghost ghost2;
+    Ghost ghost3;
+    Ghost ghost4;
+    
+    
+    int action;
+    int n, m;
+    while(true){
+    showMenu();
+    cin >> action;
+		switch(action){
+			case 1:
+				cout << "Pleace enter the dimensions of the game(x, y): ";
+				cin >> n >> m;
+				// creating the matrix
+				pacman.lives = 3;
+				map = initializeMatrix(n,m);
+				setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+				Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+				break;
+			case 2:
+			case 3:
+			case 4:
+				return 0;
+		}
     }
 
     return 0;
 }
 
-void movePacman(int **&arr, Status &pacman){
+
+void showMenu(){
+	cout << "Welcome to Pacman's Coconut version, Please choose from the list below" << endl
+	     << "1)New Game" << endl
+	     << "2)Load Game" << endl
+	     << "3)Ranking" << endl
+	     << "4)Exit" << endl;
+}
+
+void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
+
+    // adding pacman (randomly :)) to the middle of the map (as a star :))
+    map[n/2][m/2] = 2; 
+    Coords pacmanCoor;
+    pacmanCoor.i = 3 * n/4;
+    pacmanCoor.j = m/2;
+    
+    
+    // creating status for pacman
+    pacman.coords = pacmanCoor;
+    pacman.current_direction = 'd';
+    pacman.input_direction = 'd';
+    
+    
+    // adding ghosts to some place
+    Coords ghost1Coords;
+    ghost1Coords.i = n/2;
+    ghost1Coords.j = m/2;
+    
+    Coords ghost2Coords;
+    ghost2Coords.i = n/2 + 1;
+    ghost2Coords.j = m/2;
+    
+    Coords ghost3Coords;
+    ghost3Coords.i = n/2;
+    ghost3Coords.j = m/2 + 1;
+    
+    Coords ghost4Coords;
+    ghost4Coords.i = n/2 + 1;
+    ghost4Coords.j = m/2 + 1;
+    
+    //set ghosts
+    ghost1.velocity = 4;
+    ghost1.direction = 'w';
+    ghost1.coords = ghost1Coords;
+    
+    ghost2.velocity = 4;
+    ghost2.direction = 'w';
+    ghost2.coords = ghost2Coords;
+    
+    ghost3.velocity = 4;
+    ghost3.direction = 'w';
+    ghost3.coords = ghost3Coords;
+    
+    ghost4.velocity = 4;
+    ghost4.direction = 'w';
+    ghost4.coords = ghost4Coords;
+    
+    ghost1.previousStatus = 0;
+   	ghost2.previousStatus = 0;
+    ghost3.previousStatus = 0;
+   	ghost4.previousStatus = 0;
+	
+}
+
+void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
+	
+/*
+    // adding pacman (randomly :)) to the middle of the map (as a star :))
+    map[n/2][m/2] = 2; 
+    Coords pacmanCoor;
+    pacmanCoor.i = 3 * n/4;
+    pacmanCoor.j = m/2;
+    
+    
+    // creating status for pacman
+    pacman.coords = pacmanCoor;
+    pacman.lives = 3;
+    pacman.current_direction = 'd';
+    pacman.input_direction = 'd';
+    
+    
+    // adding ghosts to some place
+    Coords ghost1Coords;
+    ghost1Coords.i = n/2;
+    ghost1Coords.j = m/2;
+    
+    Coords ghost2Coords;
+    ghost2Coords.i = n/2 + 1;
+    ghost2Coords.j = m/2;
+    
+    Coords ghost3Coords;
+    ghost3Coords.i = n/2;
+    ghost3Coords.j = m/2 + 1;
+    
+    Coords ghost4Coords;
+    ghost4Coords.i = n/2 + 1;
+    ghost4Coords.j = m/2 + 1;
+    
+    //set ghosts
+    ghost1.velocity = 4;
+    ghost1.direction = 'w';
+    ghost1.coords = ghost1Coords;
+    
+    ghost2.velocity = 4;
+    ghost2.direction = 'w';
+    ghost2.coords = ghost2Coords;
+    
+    ghost3.velocity = 4;
+    ghost3.direction = 'w';
+    ghost3.coords = ghost3Coords;
+    
+    ghost4.velocity = 4;
+    ghost4.direction = 'w';
+    ghost4.coords = ghost4Coords;*/
+    
+    
+    int counter = 0;	//claculate the time to release ghosts;`
+    
+    bool pacmanCheck = 0;		//checks if pacman is alive or not;
+    
+    cout << "Enter k to start\n";
+    char input = 'h';
+    while(input != 'k'){
+    	cin >> input;
+    }
+    while(pacman.lives != 0){
+    	moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+    	
+    	if(counter >= 10){
+    		moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
+    	}
+    	
+    	
+    	if(counter >= 110){
+    		moveGhost(map, ghost3, ghost3.previousStatus, pacmanCheck);
+    	}
+    	
+    	
+    	if(counter >= 210){
+    		moveGhost(map, ghost3, ghost4.previousStatus, pacmanCheck);
+    	}
+    	
+    	
+        pacman.input_direction = getInput(pacman.input_direction);
+        updatePacmanDirection(map,pacman);
+        movePacman(map,pacman);
+        system(CLEAR);
+        printMatrix(map,n,m,pacmanCheck,pacman.lives);
+        if(pacmanCheck){
+        	pacman.lives--;
+        	setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+        	pacmanCheck = 0;
+        	counter = 0;
+        }
+        usleep(DELAY_TIME);
+        
+        if( counter <= 220){
+	        counter++;
+		}
+    }
+    
+    cout << "Game Over!\nYour score is \nEnter b to back to menu";
+    while(input != 'b'){
+    	cin >> input;
+    }
+}
+
+
+
+
+/*void movePacman(int **&arr, Status &pacman){   
     switch (pacman.current_direction)
     {
     case 'w':
@@ -78,9 +261,9 @@ void movePacman(int **&arr, Status &pacman){
         }
         break;
     }
-}
+}*/
 
-bool isThereWall(int **arr, Coords coords, char direction){
+/*bool isThereWall(int **arr, Coords coords, char direction){   
     switch (direction)
     {
     case 'w':
@@ -108,13 +291,13 @@ bool isThereWall(int **arr, Coords coords, char direction){
         return false;
         break;
     }
-}
+}*/
 
-void updatePacmanDirection(int **arr, Status &pacman){
+/*void updatePacmanDirection(int **arr, Status &pacman){  
     if(!isThereWall(arr,pacman.coords,pacman.input_direction)){
         pacman.current_direction = pacman.input_direction;
     }
-}
+}*/
 
 char getInput(char current_dir){
     char dir = current_dir;
@@ -152,7 +335,8 @@ int ** initializeMatrix(int n, int m){
     // drawMaze(new_arr,n,m);
     drawSimpleMaze(new_arr,n,m);
     drawBorders(new_arr, n,m);  
-    printMatrix(new_arr, n,m);
+    bool temp = 0;
+    printMatrix(new_arr, n,m,temp,3);
 
     return new_arr;
 }
@@ -170,14 +354,17 @@ void drawBorders(int **&arr, int n, int m){
     }
 }
 
-void printMatrix(int **arr, int n, int m){
+void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives){   
+	int dotCounter;				//if there is no dot in the map, you are the winner!	
+	bool flag = 1;				//checks if there is pacman in map
     for(int i = 0; i < n; i++){
         for(int j = 0; j<m;j++){
             switch (arr[i][j])
             {
             case 0:
                 // path
-                cout<<" ";
+                cout<<".";
+                dotCounter++;
                 break;
             case 1:
                 // wall
@@ -186,13 +373,29 @@ void printMatrix(int **arr, int n, int m){
             case 2:
                 // pacman
                 cout<<"*";
+                flag = 0;
                 break;
             case -1:
                 // condidate
-                cout<<"o";
+                cout<<" ";
                 break;
+            case -2:
+            	// ghost
+            	cout << "@";
+            	break;
             }
         }
-        cout<<endl;
+        if(i == 0){
+        	cout << "			LIVES = " << lives << endl;
+        }
+        else{
+	        cout<<endl;
+	    }
     }
+    
+    if(flag || !dotCounter)
+    	pacmanCheck = 1;
+    else
+    	pacmanCheck = 0;
+    	
 }
