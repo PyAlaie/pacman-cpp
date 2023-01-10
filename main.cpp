@@ -15,6 +15,7 @@ int ** initializeMatrix(int, int);
 void drawBorders(int **&, int, int);
 void printMatrix(int **, int, int, bool&, int);
 char getInput(char);
+void coloredCout(string text, string color);
 
 int main(){
     int **map;
@@ -34,21 +35,22 @@ int main(){
     while(true){
     showMenu();
     cin >> action;
-		switch(action){
-			case 1:
-				cout << "Pleace enter the dimensions of the game(x, y): ";
-				cin >> n >> m;
-				// creating the matrix
-				pacman.lives = 3;
-				map = initializeMatrix(n,m);
-				setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-				Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-				break;
-			case 2:
-			case 3:
-			case 4:
-				return 0;
-		}
+	switch(action){
+		case 1:
+			cout << "Pleace enter the dimensions of the game(x, y): ";
+			cin >> n >> m;
+
+			// creating the matrix
+			pacman.lives = 3;
+			map = initializeMatrix(n,m);
+			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			break;
+		case 2:
+		case 3:
+		case 4:
+			return 0;
+	}
     }
 
     return 0;
@@ -56,11 +58,13 @@ int main(){
 
 
 void showMenu(){
-	cout << "Welcome to Pacman's Coconut version, Please choose from the list below" << endl
-	     << "1)New Game" << endl
-	     << "2)Load Game" << endl
-	     << "3)Ranking" << endl
-	     << "4)Exit" << endl;
+    system(CLEAR);
+    coloredCout("\nWelcome to Pacman's Coconut version, Please choose from the list below\n\n", "green");
+    coloredCout("1. New Game\n", "blue");
+    coloredCout("2. Load Game\n", "blue");
+    coloredCout("3. Ranking\n", "blue");
+    coloredCout("4. Exit\n\n", "blue");
+    cout<<"-> ";
 }
 
 void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
@@ -272,4 +276,26 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives){
     else
     	pacmanCheck = 0;
     	
+}
+
+#define ESC "\033["
+#define GREEN_TXT "32"
+#define RED_TXT "31"
+#define YELLOW_TXT "33"
+#define RESET "\033[m"
+#define BLUE_TXT "36"
+
+void coloredCout(string text, string color){
+    if(color == "green"){
+        cout << ESC << ";" << GREEN_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "red"){
+        cout << ESC << ";" << RED_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "yellow"){
+        cout << ESC << ";" << YELLOW_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "blue"){
+        cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
+    }
 }
