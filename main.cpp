@@ -15,7 +15,7 @@ int ** initializeMatrix(int, int);
 void drawBorders(int **&, int, int);
 void printMatrix(int **, int, int, bool&, int, long long int);
 char getInput(char);
-void clearGhost(int **&, Coords, int);
+void clearGhost(int **&, Coords, int, int);
 void saveGame(int **&);
 
 int main(){
@@ -138,7 +138,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
        		break;
     }
     while(pacman.lives != 0){
-    	moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+    	//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
     	
     	if(counter >= 50){
     		moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
@@ -155,8 +155,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     	}
     	
        	pacman.input_direction = getInput(pacman.input_direction);
-       	//input = getch();
-        if(input == 'p'){
+       	if(pacman.input_direction == 'p'){
         	cout << "Do you want to save the game? Press y to save and c to continue\n";
         	input = getch();
         	while(true){
@@ -166,28 +165,31 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         	}	
         }
         
-        updatePacmanDirection(map,pacman);
-        movePacman(map,pacman,pacmanCheck);
-        system(CLEAR);
-        printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
-        if(pacmanCheck){
-        	pacman.lives--;
-        	setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-        	//clear ghosts
-        	clearGhost(map, ghost1.coords, ghost1.previousStatus);	
-        	clearGhost(map, ghost2.coords, ghost2.previousStatus);
-        	clearGhost(map, ghost3.coords, ghost3.previousStatus);
-        	clearGhost(map, ghost4.coords, ghost4.previousStatus);
-        	pacmanCheck = 0;
-        	counter = 0;
+        else{
+		updatePacmanDirection(map,pacman);
+		movePacman(map,pacman,pacmanCheck);
+		system(CLEAR);
+		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
+		if(pacmanCheck){
+			pacman.lives--;
+			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			//clear ghosts
+			clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
+			clearGhost(map, ghost2.coords, ghost2.previousStatus, n);
+			clearGhost(map, ghost3.coords, ghost3.previousStatus, n);
+			clearGhost(map, ghost4.coords, ghost4.previousStatus, n);
+			pacmanCheck = 0;
+			counter = 0;
+		}
+		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+		usleep(DELAY_TIME);
+		
+		if(counter <= 220){
+			counter++;
+		}
+		
+		timer++;
         }
-        usleep(DELAY_TIME);
-        
-        if(counter <= 220){
-        	counter++;
-        }
-        
-        timer++;
     }
     
     cout << "Game Over!\nYour score is \nEnter b to back to menu\n";
@@ -216,6 +218,9 @@ char getInput(char current_dir){
             case 's':
                 dir = 's';
                 break;
+            case 'p':
+            	dir = 'p';
+            	break;
         }
     }
     return dir;
@@ -307,8 +312,9 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
     	
 }
 
-void clearGhost(int **&map, Coords ghostCoords, int previousStatus){
+void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
 	map[ghostCoords.i][ghostCoords.j] = previousStatus;
+	copy(map, map + n, map);
 }
 
 void saveGame(int **&map){
