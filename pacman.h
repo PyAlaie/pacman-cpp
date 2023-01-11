@@ -12,7 +12,7 @@ struct Pacman{
     int lives;
     char current_direction;
     char input_direction;
-    void updatePacmanDirection(int **arr, Pacman &pacman);
+    void updatePacmanDirection(int **arr, Pacman &pacman, bool &pacmanCheck);
     void movePacman(int **&arr, Pacman &pacman);
 };
 
@@ -22,35 +22,55 @@ void updatePacmanDirection(int **arr, Pacman &pacman){
     }
 }
 
-void movePacman(int **&arr, Pacman &pacman){   
+void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck){   
     switch (pacman.current_direction)
     {
     case 'w':
         if(!isThereWall(arr, pacman.coords, 'w')){
             arr[pacman.coords.i][pacman.coords.j] = -1;
             pacman.coords.i--;
-            arr[pacman.coords.i][pacman.coords.j] = 2;
+            if(arr[pacman.coords.i][pacman.coords.j] != -2){
+	            arr[pacman.coords.i][pacman.coords.j] = 2;
+	    }
+	    else{
+	    	pacmanCheck = 1;
+	    }
         }
         break;
     case 's':
         if(!isThereWall(arr, pacman.coords, 's')){
             arr[pacman.coords.i][pacman.coords.j] = -1;
             pacman.coords.i++;
-            arr[pacman.coords.i][pacman.coords.j] = 2;
+            if(arr[pacman.coords.i][pacman.coords.j] != -2){
+	            arr[pacman.coords.i][pacman.coords.j] = 2;
+	    }
+	    else{
+	    	pacmanCheck = 1;
+	    }
         }
         break;
     case 'd':
         if(!isThereWall(arr, pacman.coords, 'd')){
             arr[pacman.coords.i][pacman.coords.j] = -1;
             pacman.coords.j++;
-            arr[pacman.coords.i][pacman.coords.j] = 2;
+            if(arr[pacman.coords.i][pacman.coords.j] != -2){
+	            arr[pacman.coords.i][pacman.coords.j] = 2;
+	    }
+	    else{
+	    	pacmanCheck = 1;
+	    }
         }
         break;
     case 'a':
         if(!isThereWall(arr, pacman.coords, 'a')){
             arr[pacman.coords.i][pacman.coords.j] = -1;
             pacman.coords.j--;
-            arr[pacman.coords.i][pacman.coords.j] = 2;
+            if(arr[pacman.coords.i][pacman.coords.j] != -2){
+	            arr[pacman.coords.i][pacman.coords.j] = 2;
+	    }
+	    else{
+	    	pacmanCheck = 1;
+	    }
         }
         break;
     }
