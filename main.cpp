@@ -13,9 +13,11 @@ void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
 void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
 int ** initializeMatrix(int, int);
 void drawBorders(int **&, int, int);
-void printMatrix(int **, int, int, bool&, int);
+void printMatrix(int **, int, int, bool&, int, long long int);
 char getInput(char);
 void coloredCout(string text, string color);
+void clearGhost(int **&, Coords, int, int);
+void saveGame(int **&);
 
 int main(){
     int **map;
@@ -116,10 +118,10 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
     ghost4.direction = 'w';
     ghost4.coords = ghost4Coords;
     
-    ghost1.previousStatus = 0;
-   	ghost2.previousStatus = 0;
-    ghost3.previousStatus = 0;
-   	ghost4.previousStatus = 0;
+   ghost1.previousStatus = 0;
+   ghost2.previousStatus = 0;
+   ghost3.previousStatus = 0;
+   ghost4.previousStatus = 0;
 	
 }
 
@@ -127,17 +129,22 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
    
     int counter = 0;	//claculate the time to release ghosts;`
     
+    
+    long long int timer = 0;	//claculate the time
+    
     bool pacmanCheck = 0;		//checks if pacman is alive or not;
     
     cout << "Enter k to start\n";
-    char input = 'h';
-    while(input != 'k'){
-    	cin >> input;
+    char input = 't';
+    while(true){
+       	input = getch();
+       	if(input == 'k')
+       		break;
     }
     while(pacman.lives != 0){
-    	moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+    	//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
     	
-    	if(counter >= 10){
+    	if(counter >= 50){
     		moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
     	}
     	
@@ -151,31 +158,51 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     		moveGhost(map, ghost3, ghost4.previousStatus, pacmanCheck);
     	}
     	
-    	
-        pacman.input_direction = getInput(pacman.input_direction);
-        updatePacmanDirection(map,pacman);
-        movePacman(map,pacman);
-        system(CLEAR);
-        printMatrix(map,n,m,pacmanCheck,pacman.lives);
-        if(pacmanCheck){
-        	pacman.lives--;
-        	setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-        	pacmanCheck = 0;
-        	counter = 0;
+       	pacman.input_direction = getInput(pacman.input_direction);
+       	if(pacman.input_direction == 'p'){
+        	cout << "Do you want to save the game? Press y to save and c to continue\n";
+        	input = getch();
+        	while(true){
+        		input = getch();
+        		if(input == 'c' || input == 'y')
+        			break;
+        	}	
         }
-        usleep(DELAY_TIME);
         
-        if( counter <= 220){
-	        counter++;
+        else{
+		updatePacmanDirection(map,pacman);
+		movePacman(map,pacman,pacmanCheck);
+		system(CLEAR);
+		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
+		if(pacmanCheck){
+			pacman.lives--;
+			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			//clear ghosts
+			clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
+			clearGhost(map, ghost2.coords, ghost2.previousStatus, n);
+			clearGhost(map, ghost3.coords, ghost3.previousStatus, n);
+			clearGhost(map, ghost4.coords, ghost4.previousStatus, n);
+			pacmanCheck = 0;
+			counter = 0;
 		}
+		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+		usleep(DELAY_TIME);
+		
+		if(counter <= 220){
+			counter++;
+		}
+		
+		timer++;
+        }
     }
     
-    cout << "Game Over!\nYour score is \nEnter b to back to menu";
-    while(input != 'b'){
-    	cin >> input;
+    cout << "Game Over!\nYour score is \nEnter b to back to menu\n";
+    while(true){
+       	input = getch();
+       	if(input == 'b')
+       		break;
     }
 }
-
 
 char getInput(char current_dir){
     char dir = current_dir;
@@ -195,6 +222,9 @@ char getInput(char current_dir){
             case 's':
                 dir = 's';
                 break;
+            case 'p':
+            	dir = 'p';
+            	break;
         }
     }
     return dir;
@@ -214,7 +244,7 @@ int ** initializeMatrix(int n, int m){
     drawSimpleMaze(new_arr,n,m);
     drawBorders(new_arr, n,m);  
     bool temp = 0;
-    printMatrix(new_arr, n,m,temp,3);
+    printMatrix(new_arr, n,m,temp,3,0);
 
     return new_arr;
 }
@@ -232,7 +262,7 @@ void drawBorders(int **&arr, int n, int m){
     }
 }
 
-void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives){   
+void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long long int timer){   
 	int dotCounter;				//if there is no dot in the map, you are the winner!	
 	bool flag = 1;				//checks if there is pacman in map
     for(int i = 0; i < n; i++){
@@ -250,7 +280,9 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives){
                 break;
             case 2:
                 // pacman
-                cout<<"*";
+                if(!pacmanCheck){
+                	cout<<"*";
+                }
                 flag = 0;
                 break;
             case -1:
@@ -264,7 +296,13 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives){
             }
         }
         if(i == 0){
-        	cout << "			LIVES = " << lives << endl;
+        	cout << "			TIME: " << timer << endl;
+        }
+        else if(i == 1){
+        	cout << "			LIVES: " << lives << endl;
+        }
+        else if(i == 2){
+        	cout << "			Whenever wnated to stop or save the game enter p" << endl;
         }
         else{
 	        cout<<endl;
@@ -298,4 +336,11 @@ void coloredCout(string text, string color){
     else if(color == "blue"){
         cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
     }
+}
+void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
+	map[ghostCoords.i][ghostCoords.j] = previousStatus;
+	copy(map, map + n, map);
+}
+
+void saveGame(int **&map){
 }
