@@ -16,6 +16,7 @@ void drawBorders(int **&, int, int);
 void printMatrix(int **, int, int, bool&, int, long long int);
 char getInput(char);
 void clearGhost(int **&, Coords, int);
+void saveGame(int **&);
 
 int main(){
 
@@ -130,9 +131,11 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     bool pacmanCheck = 0;		//checks if pacman is alive or not;
     
     cout << "Enter k to start\n";
-    char input = 'h';
-    while(input != 'k'){
-    	cin >> input;
+    char input = 't';
+    while(true){
+       	input = getch();
+       	if(input == 'k')
+       		break;
     }
     while(pacman.lives != 0){
     	moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
@@ -151,8 +154,18 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     		moveGhost(map, ghost3, ghost4.previousStatus, pacmanCheck);
     	}
     	
-    	
-        pacman.input_direction = getInput(pacman.input_direction);
+       	pacman.input_direction = getInput(pacman.input_direction);
+       	//input = getch();
+        if(input == 'p'){
+        	cout << "Do you want to save the game? Press y to save and c to continue\n";
+        	input = getch();
+        	while(true){
+        		input = getch();
+        		if(input == 'c' || input == 'y')
+        			break;
+        	}	
+        }
+        
         updatePacmanDirection(map,pacman);
         movePacman(map,pacman,pacmanCheck);
         system(CLEAR);
@@ -178,8 +191,10 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     }
     
     cout << "Game Over!\nYour score is \nEnter b to back to menu\n";
-    while(input != 'b'){
-    	cin >> input;
+    while(true){
+       	input = getch();
+       	if(input == 'b')
+       		break;
     }
 }
 
@@ -277,6 +292,9 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
         else if(i == 1){
         	cout << "			LIVES: " << lives << endl;
         }
+        else if(i == 2){
+        	cout << "			Whenever wnated to stop or save the game enter p" << endl;
+        }
         else{
 	        cout<<endl;
 	    }
@@ -291,4 +309,7 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
 
 void clearGhost(int **&map, Coords ghostCoords, int previousStatus){
 	map[ghostCoords.i][ghostCoords.j] = previousStatus;
+}
+
+void saveGame(int **&map){
 }
