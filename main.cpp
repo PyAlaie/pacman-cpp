@@ -170,29 +170,29 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         }
         
         else{
-		updatePacmanDirection(map,pacman);
-		movePacman(map,pacman,pacmanCheck);
-		system(CLEAR);
-		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
-		if(pacmanCheck){
-			pacman.lives--;
-			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-			//clear ghosts
-			clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
-			clearGhost(map, ghost2.coords, ghost2.previousStatus, n);
-			clearGhost(map, ghost3.coords, ghost3.previousStatus, n);
-			clearGhost(map, ghost4.coords, ghost4.previousStatus, n);
-			pacmanCheck = 0;
-			counter = 0;
-		}
-		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
-		usleep(DELAY_TIME);
-		
-		if(counter <= 220){
-			counter++;
-		}
-		
-		timer++;
+            updatePacmanDirection(map,pacman);
+            movePacman(map,pacman,pacmanCheck);
+            system(CLEAR);
+            printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
+            if(pacmanCheck){
+                pacman.lives--;
+                setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+                //clear ghosts
+                clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
+                clearGhost(map, ghost2.coords, ghost2.previousStatus, n);
+                clearGhost(map, ghost3.coords, ghost3.previousStatus, n);
+                clearGhost(map, ghost4.coords, ghost4.previousStatus, n);
+                pacmanCheck = 0;
+                counter = 0;
+            }
+            moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+            usleep(DELAY_TIME);
+            
+            if(counter <= 220){
+                counter++;
+            }
+            
+            timer++;
         }
     }
     

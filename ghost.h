@@ -14,7 +14,6 @@ struct Ghost{
 	int previousStatus;
 };
 
-
 void moveGhost(int **&ground, Ghost &ghost, int &previousStatus, bool &pacmanCheck){
 	while(isThereWall(ground, ghost.coords, ghost.direction)){   
 		int random = rand() % 4;

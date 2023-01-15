@@ -12,15 +12,6 @@ struct Coords
     bool isThereWall(int **arr, Coords coords, char direction);
 };
 
-/*struct Status
-{
-    Coords coords;
-    int lives;
-    char current_direction;
-    char input_direction;
-    bool isThereWall(int **arr, Coords coords, char direction);
-};*/
-
 
 bool isThereWall(int **arr, Coords coords, char direction){   
     switch (direction)
