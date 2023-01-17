@@ -43,7 +43,7 @@ void moveGhost(int **&ground, Ghost &ghost, int &previousStatus, bool &pacmanChe
 		    if(ground[ghost.coords.i][ghost.coords.j] != -2 && ground[ghost.coords.i][ghost.coords.j] != 2){
 		    	previousStatus = ground[ghost.coords.i][ghost.coords.j];
 		    }
-		    else if(ground[ghost.coords.i][ghost.coords.j] == 2){       
+		    else if(ground[ghost.coords.i][ghost.coords.j] == 2 || previousStatus == 2){       
 		    	pacmanCheck = 1;
 		    }
 		    ground[ghost.coords.i][ghost.coords.j] = -2;
@@ -56,7 +56,7 @@ void moveGhost(int **&ground, Ghost &ghost, int &previousStatus, bool &pacmanChe
 		    if(ground[ghost.coords.i][ghost.coords.j] != -2 && ground[ghost.coords.i][ghost.coords.j] != 2){
 		    	previousStatus = ground[ghost.coords.i][ghost.coords.j];
 		    }
-		    else if(ground[ghost.coords.i][ghost.coords.j] == 2){
+		    else if(ground[ghost.coords.i][ghost.coords.j] == 2 || previousStatus == 2){
 		    	pacmanCheck = 1;
 		    }
 		    ground[ghost.coords.i][ghost.coords.j] = -2;
@@ -69,7 +69,7 @@ void moveGhost(int **&ground, Ghost &ghost, int &previousStatus, bool &pacmanChe
 		    if(ground[ghost.coords.i][ghost.coords.j] != -2 && ground[ghost.coords.i][ghost.coords.j] != 2){
 		    	previousStatus = ground[ghost.coords.i][ghost.coords.j];
 		    }
-		    else if(ground[ghost.coords.i][ghost.coords.j] == 2){
+		    else if(ground[ghost.coords.i][ghost.coords.j] == 2 || previousStatus == 2){
 		    	pacmanCheck = 1;
 		    }
 		    ground[ghost.coords.i][ghost.coords.j] = -2;
@@ -82,7 +82,7 @@ void moveGhost(int **&ground, Ghost &ghost, int &previousStatus, bool &pacmanChe
 		    if(ground[ghost.coords.i][ghost.coords.j] != -2 && ground[ghost.coords.i][ghost.coords.j] != 2){
 		    	previousStatus = ground[ghost.coords.i][ghost.coords.j];
 		    }
-		    else if(ground[ghost.coords.i][ghost.coords.j] == 2){
+		    else if(ground[ghost.coords.i][ghost.coords.j] == 2 || previousStatus == 2){
 		    	pacmanCheck = 1;
 		    }
 		    ground[ghost.coords.i][ghost.coords.j] = -2;

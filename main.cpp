@@ -17,7 +17,10 @@ void printMatrix(int **, int, int, bool&, int, long long int);
 char getInput(char);
 void coloredCout(string text, string color);
 void clearGhost(int **&, Coords, int, int);
+void clearPacman(int **&, Coords);
 void saveGame(int **&);
+int dotCounter = 0;
+int ghostCounter = 0;       //countds the number of ghosts that had been eaten
 
 int main(){
     int **map;
@@ -168,8 +171,8 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         			break;
         	}	
         }
-        
         else{
+<<<<<<< HEAD
             updatePacmanDirection(map,pacman);
             movePacman(map,pacman,pacmanCheck);
             system(CLEAR);
@@ -193,6 +196,37 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
             }
             
             timer++;
+=======
+		updatePacmanDirection(map,pacman);
+		movePacman(map,pacman,pacmanCheck);
+		system(CLEAR);
+		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
+        bool ghost1Check = ghostCheck(pacman.coords, ghost1.coords);
+        bool ghost2Check = ghostCheck(pacman.coords, ghost2.coords);
+        bool ghost3Check = ghostCheck(pacman.coords, ghost3.coords);
+        bool ghost4Check = ghostCheck(pacman.coords, ghost4.coords);
+		if(pacmanCheck || ghost1Check || ghost2Check || ghost3Check || ghost4Check){
+			pacman.lives--;
+			//clear ghosts
+			clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
+			clearGhost(map, ghost2.coords, ghost2.previousStatus, n);
+			clearGhost(map, ghost3.coords, ghost3.previousStatus, n);
+			clearGhost(map, ghost4.coords, ghost4.previousStatus, n);
+            clearPacman(map, pacman.coords);
+
+            setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			pacmanCheck = 0;
+			counter = 0;
+		}
+		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+		usleep(DELAY_TIME);
+		
+		if(counter <= 220){
+			counter++;
+		}
+		
+		timer++;
+>>>>>>> Rana
         }
     }
     
@@ -263,7 +297,7 @@ void drawBorders(int **&arr, int n, int m){
 }
 
 void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long long int timer){   
-	int dotCounter;				//if there is no dot in the map, you are the winner!	
+	dotCounter = 0;				//if there is no dot in the map, you are the winner!	
 	bool flag = 1;				//checks if there is pacman in map
     for(int i = 0; i < n; i++){
         for(int j = 0; j<m;j++){
@@ -340,6 +374,10 @@ void coloredCout(string text, string color){
 void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
 	map[ghostCoords.i][ghostCoords.j] = previousStatus;
 	copy(map, map + n, map);
+}
+
+void clearPacman(int **&map, Coords pacmanCoords){
+    map[pacmanCoords.i][pacmanCoords.j] = 0;
 }
 
 void saveGame(int **&map){
