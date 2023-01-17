@@ -35,7 +35,6 @@ bool closeDB(sqlite3 *&db);
 void saveRankingRecord(sqlite3 *&db,string username, int score);
 int createTableRankingIfNotExist(sqlite3 *&db);
 vector<ranking> getTopScores(sqlite3 *db, int count);
-int createTableGameIfNotExist(sqlite3 *&db);
 
 bool initializeDB(sqlite3 *&db){
     int exit = 0;
