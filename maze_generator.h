@@ -16,6 +16,8 @@ Coords selectRandomCondidate(vector<Coords> condidatePoints);
 void autoCondidateRemove(int **&arr, int n, int m, vector<Coords> &condidatePoints);
 bool isTherePathAround(int **arr, Coords point);
 void drawSimpleMaze(int **&arr, int n, int m);
+void removeDeadends(int **&arr, int n, int m);
+vector<char> deadends(int **arr, int i, int j);
 
 Coords selectRandomPoint(int n, int m){
     srand((unsigned) time(NULL));
@@ -174,15 +176,13 @@ void drawMaze(int **&arr, int n, int m){
     system("clear");
     vector<Coords> condidatePoints;
     updateCondidates(arr,n,m,condidatePoints);
-    printMatrixx(arr,n,m);
-    cout<<condidatePoints.size()<<endl;
-
+    // printMatrixx(arr,n,m);
 
     int c = 0;
     while (!condidatePoints.empty())
     {   
-        usleep(100000);
-        system("clear");
+        // usleep(8000);
+        // system("clear");
         Coords point = selectRandomCondidate(condidatePoints);
 
         drawPathFromCondidate(arr,n,m,point);
@@ -198,10 +198,10 @@ void drawMaze(int **&arr, int n, int m){
 
         updateCondidates(arr,n,m,condidatePoints);
         autoCondidateRemove(arr,n,m,condidatePoints);
-        printMatrixx(arr,n,m);
-        cout<<condidatePoints.size()<<endl;
+        // printMatrixx(arr,n,m);
         c++;
     }
+    // removeDeadends(arr,n,m);
     
 }
 
@@ -217,4 +217,50 @@ void drawSimpleMaze(int **&arr, int n, int m){
         }
         counter ++;
     }
+}
+
+void removeDeadends(int **&arr, int n, int m){
+    for(int i = 1; i < n -1; i++){
+        for(int j = 1; j < m-1; j++){
+            if(deadends(arr, i, j).size() == 3){
+                arr[i][j] = -1;
+                system("clear");
+                printMatrixx(arr,n,m);
+                usleep(1000000);
+                arr[i][j] = 0;
+                vector<char> deadendDirs = deadends(arr,i,j);
+                srand((unsigned) time(NULL));
+                char dir = deadendDirs[rand()%deadendDirs.size()];
+                switch (dir)
+                {
+                    case 'a':
+                        arr[i][j-1] = 0;
+                        break;
+                    case 'd':
+                        arr[i][j+1] = 0;
+                        break;
+                    case 'w':
+                        arr[i-1][j] = 0;
+                        break;
+                    case 's':
+                        arr[i+1][j] = 0;
+                        break;
+                }
+                // usleep(500000);
+                system("clear");
+                printMatrixx(arr,n,m);
+            }
+        }
+    }
+}
+
+vector<char> deadends(int **arr, int i, int j){
+    vector<char> dirs;
+
+    if(arr[i+1][j] == 1) dirs.push_back('s');
+    if(arr[i][j+1] == 1) dirs.push_back('d');
+    if(arr[i][j-1] == 1) dirs.push_back('a');
+    if(arr[i-1][j] == 1) dirs.push_back('w');
+
+    return dirs;
 }
