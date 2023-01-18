@@ -58,15 +58,13 @@ bool ghostCheck(Coords pacman, Coords ghost){
 
 }
 
-int score(int time, int dotCounter, int ghostCounter){
+int calScore(int dotCounter, int ghostCounter){
     int score = 0;
     dotCounter *= 10;
-    time /= 100;
     for(int i = 1; i <= ghostCounter; i++){
         score += i * 100;
     }
     score += dotCounter;
-    score /= time;
     return score;
 }
 

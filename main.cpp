@@ -5,12 +5,13 @@
 #include "maze_generator.h"
 #include "ghost.h"
 #include "pacman.h"	
+#include "database.h"
 
 using namespace std;
 
 void showMenu();
 void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
-void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
+void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int, sqlite3 *&db);
 int ** initializeMatrix(int, int);
 void drawBorders(int **&, int, int);
 void printMatrix(int **, int, int, bool&, int, long long int);
@@ -24,7 +25,10 @@ int ghostCounter = 0;       //countds the number of ghosts that had been eaten
 
 int main(){
     int **map;
-    
+
+    sqlite3 *db;
+    initializeDB(db);
+
     // creating status for pacman
     Pacman pacman;
     
@@ -40,21 +44,31 @@ int main(){
     while(true){
     showMenu();
     cin >> action;
+    vector<ranking> rr;
 	switch(action){
 		case 1:
 			cout << "Pleace enter the dimensions of the game(x, y): ";
 			cin >> n >> m;
 
 			// creating the matrix
-			pacman.lives = 3;
+			pacman.lives = 1;
 			map = initializeMatrix(n,m);
 			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db);
 			break;
 		case 2:
+            break;
 		case 3:
+            rr = getTopScores(db,10);
+            for(int i = 0; i< rr.size(); i++){
+                cout<<rr[i].username<<" "<<rr[i].score<<endl;
+            }
+            char a;
+            cin>>a;
+            break;
 		case 4:
-			return 0;
+            break;
+			// return 0;
 	}
     }
 
@@ -128,7 +142,7 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
 	
 }
 
-void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
+void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m, sqlite3 *&db){
    
     int counter = 0;	//claculate the time to release ghosts;`
     
@@ -156,7 +170,6 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     		moveGhost(map, ghost3, ghost3.previousStatus, pacmanCheck);
     	}
     	
-    	
     	if(counter >= 210){
     		moveGhost(map, ghost3, ghost4.previousStatus, pacmanCheck);
     	}
@@ -169,7 +182,18 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         		input = getch();
         		if(input == 'c' || input == 'y')
         			break;
-        	}	
+        	}
+            if(input == 'y'){
+                string name;
+                coloredCout("Enter Name", "green");
+                cin >> name;
+                while(!isNameValid(name)){
+                    coloredCout("Invalid name", "red");
+                    cin >> name;
+                }
+                saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
+                break;
+            }
         }
         else{
 		updatePacmanDirection(map,pacman);
@@ -204,12 +228,18 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         }
     }
     
-    cout << "Game Over!\nYour score is \nEnter b to back to menu\n";
-    while(true){
-       	input = getch();
-       	if(input == 'b')
-       		break;
-    }
+    int score = calScore(dotCounter, ghostCounter);
+    cout << "Game Over!\nYour score is " << score<<endl;
+    string username;
+    coloredCout("Enter Name: ", "blue");
+    cin >> username;
+    saveRankingRecord(db, username, score, timer);
+    return;
+    // while(true){
+    //    	input = getch();
+    //    	if(input == 'b')
+    //    		break;
+    // }
 }
 
 char getInput(char current_dir){
@@ -352,7 +382,4 @@ void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
 
 void clearPacman(int **&map, Coords pacmanCoords){
     map[pacmanCoords.i][pacmanCoords.j] = 0;
-}
-
-void saveGame(int **&map){
 }

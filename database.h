@@ -50,14 +50,14 @@ bool closeDB(sqlite3 *&db){
     return !exit;
 }
 
-void saveRankingRecord(sqlite3 *&db,string username, int score){
-    string q = "INSERT INTO RANKING (username, score) VALUES (\""+ username + "\", "+to_string(score)+")";
+void saveRankingRecord(sqlite3 *&db,string username, int score, int time){
+    string q = "INSERT INTO RANKING (username, score, time) VALUES (\""+ username + "\", "+to_string(score)+","+to_string(time)+")";
     char* messaggeError;
     int exit = sqlite3_exec(db, q.c_str(), NULL, 0 , &messaggeError);
 }
 
 int createTableRankingIfNotExist(sqlite3 *&db){
-    string query = "CREATE TABLE IF NOT EXISTS RANKING (username varchar, score int);";
+    string query = "CREATE TABLE IF NOT EXISTS RANKING (username varchar, score int, time int);";
     char* messaggeError;
     int exit = sqlite3_exec(db, query.c_str(), NULL, 0, &messaggeError);
     return exit;
