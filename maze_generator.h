@@ -18,6 +18,9 @@ bool isTherePathAround(int **arr, Coords point);
 void drawSimpleMaze(int **&arr, int n, int m);
 void removeDeadends(int **&arr, int n, int m);
 vector<char> deadends(int **arr, int i, int j);
+void drawBorders(int **&, int, int);
+int ** initializeMatrix(int, int);
+
 
 Coords selectRandomPoint(int n, int m){
     srand((unsigned) time(NULL));
@@ -263,4 +266,33 @@ vector<char> deadends(int **arr, int i, int j){
     if(arr[i-1][j] == 1) dirs.push_back('w');
 
     return dirs;
+}
+
+int ** initializeMatrix(int n, int m){
+    //creating the matrix
+    int ** new_arr = new int*[29];
+    for (int i = 0; i < 29; ++i) {
+        new_arr[i] = new int[28];
+        for (int j = 0; j < 28; ++j) {
+            new_arr[i][j] = 0;
+        }
+    }
+    
+    // drawMaze(new_arr,n,m);
+    drawSimpleMaze(new_arr,n,m);
+    
+    return new_arr;
+}
+
+void drawBorders(int **&arr, int n, int m){
+    // in the matrix, 1 represents wall block, while 0 represents path
+    // this function turns every number on the border of the matrix to 1
+    for(int i = 0; i < n; i++){
+        arr[i][0] = 1;
+        arr[i][m-1] = 1;
+    }
+    for(int j = 0; j < m; j++){
+        arr[0][j] = 1;
+        arr[n-1][j] = 1;
+    }
 }

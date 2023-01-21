@@ -1,3 +1,5 @@
+#ifndef MAZE_GENERATOR_GOD_MODE_H
+#define MAZE_GENERATOR_GOD_MODE_H
 #include <iostream>
 #include <cstdlib>
 #include "structs.h"
@@ -25,6 +27,7 @@ bool canExpandToRight(int **arr, int n, int m, int i, int j);
 bool canExpandToDown(int **arr, int n, int m, int i, int j);
 void drawGhostHouse(int **&arr, int n, int m);
 void drawTempLine(int **&arr, int n, int m);
+int ** initializeMatrix(int, int);
 
 void drawTempLine(int **&arr, int n, int m){
     int width = m/2+1;
@@ -376,3 +379,21 @@ bool canExpandToDown(int **arr, int n, int m, int i, int j){
     }
     return false;
 }
+
+int ** initializeMatrix(int n, int m){
+    //creating the matrix
+    int ** new_arr = new int*[29];
+    for (int i = 0; i < 29; ++i) {
+        new_arr[i] = new int[28];
+        for (int j = 0; j < 28; ++j) {
+            new_arr[i][j] = 0;
+        }
+    }
+
+    drawGodMaze(new_arr,n,m);
+
+    
+    return new_arr;
+}
+
+#endif
