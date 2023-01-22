@@ -239,9 +239,9 @@ void drawGodMaze(int **&arr, int n, int m){
         }
     }
 
-    mirrorMaze(arr,n,m);
     blankGhostHouse(arr,n,m);
-
+    mirrorMaze(arr,n,m);
+    
     // system("clear");
     // printMatrix(arr,n,m);
 }
