@@ -171,6 +171,14 @@ void printMatrixx(int **arr, int n, int m){
     }
 }
 
+void mirrorMaze(int **&map, int n, int m){
+    int half = m/2 +1;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < half; j++){
+            map[i][m-1-j] = map[i][j];
+        }
+    }
+}
 
 void drawMaze(int **&arr, int n, int m){
     Coords startPoint = selectRandomPoint(n,m); 
@@ -179,13 +187,13 @@ void drawMaze(int **&arr, int n, int m){
     system("clear");
     vector<Coords> condidatePoints;
     updateCondidates(arr,n,m,condidatePoints);
-    // printMatrixx(arr,n,m);
+    printMatrixx(arr,n,m);
 
     int c = 0;
     while (!condidatePoints.empty())
     {   
-        // usleep(8000);
-        // system("clear");
+        usleep(8000);
+        system("clear");
         Coords point = selectRandomCondidate(condidatePoints);
 
         drawPathFromCondidate(arr,n,m,point);
@@ -201,9 +209,14 @@ void drawMaze(int **&arr, int n, int m){
 
         updateCondidates(arr,n,m,condidatePoints);
         autoCondidateRemove(arr,n,m,condidatePoints);
-        // printMatrixx(arr,n,m);
+        printMatrixx(arr,n,m);
         c++;
     }
+    system("clear");
+    mirrorMaze(arr,n,m);
+    removeDeadends(arr,n,m);
+        printMatrixx(arr,n,m);
+
     // removeDeadends(arr,n,m);
     
 }
@@ -226,10 +239,10 @@ void removeDeadends(int **&arr, int n, int m){
     for(int i = 1; i < n -1; i++){
         for(int j = 1; j < m-1; j++){
             if(deadends(arr, i, j).size() == 3){
-                arr[i][j] = -1;
-                system("clear");
-                printMatrixx(arr,n,m);
-                usleep(1000000);
+                // arr[i][j] = -1;
+                // system("clear");
+                // printMatrixx(arr,n,m);
+                // usleep(1000000);
                 arr[i][j] = 0;
                 vector<char> deadendDirs = deadends(arr,i,j);
                 srand((unsigned) time(NULL));
@@ -251,7 +264,7 @@ void removeDeadends(int **&arr, int n, int m){
                 }
                 // usleep(500000);
                 system("clear");
-                printMatrixx(arr,n,m);
+                // printMatrixx(arr,n,m);
             }
         }
     }
