@@ -36,7 +36,7 @@ void drawTempLine(int **&arr, int n, int m){
     }
 }
 
-int height = 5;
+int height = 4;
 int width = 4;
 void drawGhostHouse(int **&arr, int n, int m){
     int midWidth = m/2;
@@ -52,14 +52,14 @@ void blankGhostHouse(int **&arr, int n, int m){
     int midWidth = m/2;
     for(int i = n/4+1; i < (n/4)+ height-1; i++){
         for(int j = (m/2)-width+1; j < (m/2)+width-1; j++){
-            arr[i][j] = 0;
+            arr[i][j] = -1;
             copy(arr,arr+n,arr);
         }
     }
 
     //putting the door
     for(int j = midWidth-2; j < midWidth+2; j++){
-        arr[n/4][j] = 0;
+        arr[n/4][j] = -1;
         copy(arr,arr+n,arr);
     }
 }
@@ -389,10 +389,10 @@ bool canExpandToDown(int **arr, int n, int m, int i, int j){
 
 int ** initializeMatrix(int n, int m){
     //creating the matrix
-    int ** new_arr = new int*[29];
-    for (int i = 0; i < 29; ++i) {
-        new_arr[i] = new int[28];
-        for (int j = 0; j < 28; ++j) {
+    int ** new_arr = new int*[n];
+    for (int i = 0; i < n; ++i) {
+        new_arr[i] = new int[m];
+        for (int j = 0; j < m; ++j) {
             new_arr[i][j] = 0;
         }
     }

@@ -5,12 +5,12 @@
 #include <conio.h> 
 #include "config.h"
 #include "structs.h" 
-#include "maze_generator.h"
+// #include "maze_generator.h"
 #include "ghost.h"
 #include "pacman.h"	
 #include "database.h"
 
-//#include "maze_generator_god_mode.h"
+#include "maze_generator_god_mode.h"
 
 void showMenu();
 void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
@@ -38,7 +38,7 @@ void showMenu(){
 void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
 
     // adding pacman (randomly :)) to the middle of the map (as a star :))
-    map[n/2][m/2] = 2; 
+    map[3*n/4][m/2] = 2; 
     Coords pacmanCoor;
     pacmanCoor.i = 3 * n/4;
     pacmanCoor.j = m/2;
@@ -52,19 +52,19 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
     
     // adding ghosts to some place
     Coords ghost1Coords;
-    ghost1Coords.i = n/2;
+    ghost1Coords.i = n/4+1;
     ghost1Coords.j = m/2;
     
     Coords ghost2Coords;
-    ghost2Coords.i = n/2 + 1;
+    ghost2Coords.i = n/4 + 1;
     ghost2Coords.j = m/2;
     
     Coords ghost3Coords;
-    ghost3Coords.i = n/2;
+    ghost3Coords.i = n/4;
     ghost3Coords.j = m/2 + 1;
     
     Coords ghost4Coords;
-    ghost4Coords.i = n/2 + 1;
+    ghost4Coords.i = n/4 + 1;
     ghost4Coords.j = m/2 + 1;
     
     //set ghosts
@@ -84,10 +84,10 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
     ghost4.direction = 'w';
     ghost4.coords = ghost4Coords;
     
-   ghost1.previousStatus = 0;
-   ghost2.previousStatus = 0;
-   ghost3.previousStatus = 0;
-   ghost4.previousStatus = 0;
+   ghost1.previousStatus = -1;
+   ghost2.previousStatus = -1;
+   ghost3.previousStatus = -1;
+   ghost4.previousStatus = -1;
 	
 }
 
