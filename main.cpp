@@ -1,9 +1,12 @@
 #include <iostream>
 #include <conio.h> 
 #include "game.h"
+#include "pacman.h"
+#include "ghost.h"
+#include "maze_generator.h"
+#include <vector>
 
 using namespace std;
-
 
 int main(){
     int **map;
@@ -12,8 +15,13 @@ int main(){
     sqlite3 *db;
     initializeDB(db);
 
-    // creating status for pacman
-    Pacman pacman;
+    Coords sample;
+    sample.i = 29;
+    sample.j = 28;
+
+    Pacman pacman = Pacman(sample, 3, 'd', 'd');
+    Consul consul;
+    Game game;
     
     //creating ghosts
     Ghost ghost1;
@@ -25,19 +33,19 @@ int main(){
     int action;
     int n, m;
     while(true){
-    showMenu();
+    consul.showMenu();
     cin >> action;
     vector<ranking> rr;
+
 	switch(action){
 		case 1:
 			cout << "Pleace enter the dimensions of the game(x, y): ";
 			cin >> n >> m;
 
 			// creating the matrix
-			pacman.lives = 3;
 			map = initializeMatrix(n,m);
-			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
-			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db);
+			game.setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
+			game.play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db, consul);
 			break;
 		case 2:
             break;

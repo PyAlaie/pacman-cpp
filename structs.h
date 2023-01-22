@@ -2,17 +2,50 @@
 #define STRUCTS_H
 
 #include <iostream>
+#include <conio.h> 
 #include <cmath>
 
 using namespace std;
+
+int dotCounter = 0;
+int ghostCounter = 0;       //countds the number of ghosts that had been eaten
 
 struct Coords
 {
     int i;
     int j;
-    bool isThereWall(int **arr, Coords coords, char direction);
-    bool pacmanCheck(int **&map, char pacmanDir, char ghostDir);
 };
+
+char getInput(char);
+bool isThereWall(int **arr, Coords coords, char direction);
+bool pacmanCheck(int **&map, char pacmanDir, char ghostDir);
+
+
+char getInput(char current_dir){
+    char dir = current_dir;
+    if (_kbhit())
+    {
+        switch (getch())
+        {
+            case 'a':
+                dir = 'a';
+                break;
+            case 'd':
+                dir = 'd';
+                break;
+            case 'w':
+                dir = 'w';
+                break;
+            case 's':
+                dir = 's';
+                break;
+            case 'p':
+            	dir = 'p';
+            	break;
+        }
+    }
+    return dir;
+}
 
 
 bool isThereWall(int **arr, Coords coords, char direction){   
@@ -44,6 +77,9 @@ bool isThereWall(int **arr, Coords coords, char direction){
         break;
     }
 }
+
+
+
 
 bool ghostCheck(Coords pacman, Coords ghost){
     Coords minCoor;

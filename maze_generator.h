@@ -279,7 +279,7 @@ int ** initializeMatrix(int n, int m){
     }
     
     // drawMaze(new_arr,n,m);
-    drawSimpleMaze(new_arr,n,m);
+    drawSimpleMaze(new_arr,n,m);    
     
     return new_arr;
 }
