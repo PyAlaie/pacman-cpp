@@ -1,5 +1,5 @@
 #ifndef CONSUL_H
-#define CONSULE_H
+#define CONSUL_H
 
 #include <iostream>
 #include <conio.h>
@@ -12,12 +12,14 @@
 #define RESET "\033[m"
 #define BLUE_TXT "36"
 
+using namespace std;
+
 class Consul{
 
 public:
     void showMenu();
-    void printMatrix(int **, int, int, bool&, int, long long int);
     //void coloredCout(string text, string color);
+    void printMatrix(int **, int, int, bool&, int, long long int);
 };
 
 #endif

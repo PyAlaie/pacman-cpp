@@ -4,6 +4,7 @@
 #include <iostream>
 #include <conio.h> 
 #include <cmath>
+#include <string>
 
 using namespace std;
 
@@ -16,10 +17,34 @@ struct Coords
     int j;
 };
 
+
 char getInput(char);
 bool isThereWall(int **arr, Coords coords, char direction);
 bool pacmanCheck(int **&map, char pacmanDir, char ghostDir);
+void coloredCout(string text, string color);
 
+
+#define ESC "\033["
+#define GREEN_TXT "32"
+#define RED_TXT "31"
+#define YELLOW_TXT "33"
+#define RESET "\033[m"
+#define BLUE_TXT "36"
+
+void coloredCout(std::string text, std::string color){
+    if(color == "green"){
+        cout << ESC << ";" << GREEN_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "red"){
+        cout << ESC << ";" << RED_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "yellow"){
+        cout << ESC << ";" << YELLOW_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "blue"){
+        cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
+    }
+}
 
 char getInput(char current_dir){
     char dir = current_dir;

@@ -10,7 +10,7 @@
 #include "pacman.h"
 #include "database.h"
 #include "consul.h"
-
+#include <conio.h>
 
 class Game{
 

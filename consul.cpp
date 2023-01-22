@@ -2,17 +2,36 @@
 #include "consul.h"
 #include "structs.h"
 #include "config.h"
+#include <string>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#define ESC "\033["
+using namespace std;
+
+/*#define ESC "\033["
 #define GREEN_TXT "32"
 #define RED_TXT "31"
 #define YELLOW_TXT "33"
 #define RESET "\033[m"
 #define BLUE_TXT "36"
+
+void 
+Consul::coloredCout(string text, string color){
+    if(color == "green"){
+        cout << ESC << ";" << GREEN_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "red"){
+        cout << ESC << ";" << RED_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "yellow"){
+        cout << ESC << ";" << YELLOW_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "blue"){
+        cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
+    }
+}*/
 
 void 
 Consul::showMenu(){
@@ -80,21 +99,6 @@ Consul::printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long 
     	
 }
 
-void 
-Consul::coloredCout(string text, string color){
-    if(color == "green"){
-        cout << ESC << ";" << GREEN_TXT <<"m"<< text << RESET;
-    }
-    else if(color == "red"){
-        cout << ESC << ";" << RED_TXT <<"m"<< text << RESET;
-    }
-    else if(color == "yellow"){
-        cout << ESC << ";" << YELLOW_TXT <<"m"<< text << RESET;
-    }
-    else if(color == "blue"){
-        cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
-    }
-}
 
 
 

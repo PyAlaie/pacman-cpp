@@ -1,3 +1,6 @@
+#ifndef MAZE_GENERATOR_H 
+#define MAZE_GENERATOR_H
+
 #include <iostream>
 #include <cstdlib>
 #include "structs.h"
@@ -296,3 +299,5 @@ void drawBorders(int **&arr, int n, int m){
         arr[n-1][j] = 1;
     }
 }
+
+#endif

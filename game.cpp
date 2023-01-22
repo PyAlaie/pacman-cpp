@@ -11,6 +11,8 @@
 #include "database.h"
 #include "consul.h"
 
+using namespace std;
+
 
 void 
 Game::setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
@@ -115,10 +117,10 @@ Game::play(int **map, Pacman &pacman, Ghost &ghost1,
         	}
             if(input == 'y'){
                 string name;
-                consul.coloredCout("Enter Name", "green");
+                coloredCout("Enter Name", "green");
                 cin >> name;
                 while(!isNameValid(name)){
-                    consul.coloredCout("Invalid name", "red");
+                    coloredCout("Invalid name", "red");
                     cin >> name;
                 }
                 saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
@@ -161,7 +163,7 @@ Game::play(int **map, Pacman &pacman, Ghost &ghost1,
     int score = calScore(dotCounter, ghostCounter);
     cout << "Game Over!\nYour score is " << score<<endl;
     string username;
-    consul.coloredCout("Enter Name: ", "blue");
+    coloredCout("Enter Name: ", "blue");
     cin >> username;
     saveRankingRecord(db, username, score, timer);
     return;

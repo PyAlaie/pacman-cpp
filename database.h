@@ -1,3 +1,6 @@
+#ifndef DATABASE_H 
+#define DATABASE_H
+
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
@@ -241,3 +244,4 @@ bool isNameValid(string name){
     }
     return true;
 }
+#endif
