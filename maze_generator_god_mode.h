@@ -33,10 +33,12 @@ void drawTempLine(int **&arr, int n, int m){
     }
 }
 
+int height = 5;
+int width = 4;
 void drawGhostHouse(int **&arr, int n, int m){
     int midWidth = m/2;
-    for(int i = n/4; i < (n/4)+ 5; i++){
-        for(int j = (m/2)-6; j < (m/2)+6; j++){
+    for(int i = n/4; i < (n/4)+ height; i++){
+        for(int j = (m/2)-width; j < (m/2)+width; j++){
             arr[i][j] = 1;
             copy(arr,arr+n,arr);
         }
@@ -45,11 +47,17 @@ void drawGhostHouse(int **&arr, int n, int m){
 
 void blankGhostHouse(int **&arr, int n, int m){
     int midWidth = m/2;
-    for(int i = n/4+1; i < (n/4)+ 4; i++){
-        for(int j = (m/2)-5; j < (m/2)+5; j++){
+    for(int i = n/4+1; i < (n/4)+ height-1; i++){
+        for(int j = (m/2)-width+1; j < (m/2)+width-1; j++){
             arr[i][j] = 0;
             copy(arr,arr+n,arr);
         }
+    }
+
+    //putting the door
+    for(int j = midWidth-2; j < midWidth+2; j++){
+        arr[n/4][j] = 0;
+        copy(arr,arr+n,arr);
     }
 }
 
@@ -91,7 +99,7 @@ void updateStartingPositions(int **&arr, int n, int m, int margin, vector<Coords
             }
         }
     }
-    cout<<startingPoints.size()<<endl;
+    // cout<<startingPoints.size()<<endl;
 }
 
 void expandWall(int **&arr, int n, int m, Coords point){
@@ -201,9 +209,9 @@ void drawGodMaze(int **&arr, int n, int m){
         
         updateStartingPositions(arr,n,m,4,startingPoints);
 
-        system("clear");
-        printMatrix(arr,n,m);
-        usleep(50000);
+        // system("clear");
+        // printMatrix(arr,n,m);
+        // usleep(50000);
     }
 
     for(int i = 1; i < n-1; i++){
@@ -214,16 +222,16 @@ void drawGodMaze(int **&arr, int n, int m){
             if(checkNxNIsEmplty(arr, i, j, 3)){
                 arr[start.i+1][start.j+1] = 1;
                 copy(arr, arr+n, arr);
-                system("clear");
-                printMatrix(arr,n,m);
-                usleep(100000);
+                // system("clear");
+                // printMatrix(arr,n,m);
+                // usleep(100000);
                 Coords newPoint;
                 newPoint.i = start.i +1;
                 newPoint.j = start.j +1;
                 expandPoint(arr,n,m,newPoint);
-                system("clear");
-                printMatrix(arr,n,m);
-                usleep(100000);
+                // system("clear");
+                // printMatrix(arr,n,m);
+                // usleep(100000);
             }
         }
     }
@@ -231,9 +239,8 @@ void drawGodMaze(int **&arr, int n, int m){
     mirrorMaze(arr,n,m);
     blankGhostHouse(arr,n,m);
 
-    system("clear");
-    printMatrix(arr,n,m);
-
+    // system("clear");
+    // printMatrix(arr,n,m);
 }
 
 void drawBorders(int **&arr, int n, int m){
