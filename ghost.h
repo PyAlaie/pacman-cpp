@@ -16,6 +16,7 @@ struct Ghost{
 	int velocity;
 	char direction;
 	int previousStatus;
+	vector<char> path;
 };
 
 void setDir(vector<bool> &dirStatus){
@@ -181,7 +182,7 @@ void move(int **&map, Ghost &ghost){
 }
 
 char chooseDirection(int **map, Coords targetPoint, Coords ghostCoords, char currentDir){ //chooses the shortest path dir
-	int minDist = 0;
+	/*int minDist = 0;
 	bool flag = 1;
 	char dir = 'w';
 	int direction = 4;
@@ -226,7 +227,7 @@ char chooseDirection(int **map, Coords targetPoint, Coords ghostCoords, char cur
 		return 'a';
 		break;
 	}
-	return currentDir;
+	return currentDir;*/
 }
 
 
