@@ -12,6 +12,8 @@
 
 #include "maze_generator_god_mode.h"
 
+
+
 void showMenu();
 void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
 void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int, sqlite3 *&db);
@@ -28,6 +30,7 @@ int dotCounter = 0;
 int ghostCounter = 0;       //countds the number of ghosts that had been eaten
 bool cherryCheck = 0;
 int cherryTime = 0;
+int cherryCounter = 0;
 
 void showMenu(){
     system(CLEAR);
@@ -102,6 +105,8 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     long long int timer = 0;	//claculate the time
     
     bool pacmanCheck = 0;		//checks if pacman is alive or not;
+    bool flagCherry = 0;
+    
     printMatrix(map,n,m,pacmanCheck,pacman.lives,timer);
     cout << "Enter k to start\n";
     char input = 't';
@@ -158,12 +163,21 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 		updatePacmanDirection(map,pacman);
 		movePacman(map,pacman,pacmanCheck, cherryCheck, cherryTime);
 		system(CLEAR);
+        
+        
+        if(cherryCheck){
+            if(!flagCherry){
+                cherryCounter++;
+            }
+            flagCherry = 1;
+            cherryTime--;
+        }
 		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
         bool ghost1Check = ghostCheck(pacman.coords, ghost1.coords);
         bool ghost2Check = ghostCheck(pacman.coords, ghost2.coords);
         bool ghost3Check = ghostCheck(pacman.coords, ghost3.coords);
         bool ghost4Check = ghostCheck(pacman.coords, ghost4.coords);
-		if(pacmanCheck || ghost1Check || ghost2Check || ghost3Check || ghost4Check){
+		if((pacmanCheck || ghost1Check || ghost2Check || ghost3Check || ghost4Check) && !cherryCheck){
 			pacman.lives--;
 			//clear ghosts
 			clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
@@ -176,18 +190,40 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 			pacmanCheck = 0;
 			counter = 0;
 		}
+        else if(cherryCheck){ 
+            ghostCounter++;
+            if(ghost1Check){
+                ghost1.coords.i = n/4 + 1;
+                ghost1.coords.j = m/2;
+            }
+            if(ghost2Check){
+                ghost2.coords.i = n/4 + 1;
+                ghost2.coords.j = m/2;
+            }
+            if(ghost3Check){
+                ghost3.coords.i = n/4 + 1;
+                ghost3.coords.j = m/2;
+            }
+            if(ghost4Check){
+                ghost4.coords.i = n/4 + 1;
+                ghost4.coords.j = m/2;
+            }
+        }
 		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
 		usleep(DELAY_TIME);
 		
 		if(counter <= 220){
 			counter++;
 		}
-		
+		if(cherryTime == 0){
+            cherryCheck = 0;
+            flagCherry = 0;
+        }
 		timer++;
         }
     }
     
-    int score = calScore(dotCounter, ghostCounter);
+    int score = calScore(dotCounter, ghostCounter, cherryCounter);
     cout << "Game Over!\nYour score is " << score<<endl;
     string username;
     coloredCout("Enter Name: ", "blue");
@@ -256,7 +292,14 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
                 break;
             case -2:
             	// ghost
-            	cout << "@";
+                if(cherryCheck)
+                    coloredCout("@", "blue");
+                else
+                	cout << "@";
+            	break;
+            case 3:
+            	// cherry
+            	cout << "C";
             	break;
             }
         }
