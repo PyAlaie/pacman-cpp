@@ -26,6 +26,9 @@ int ** initializeMatrix(int, int);
 
 int dotCounter = 0;
 int ghostCounter = 0;       //countds the number of ghosts that had been eaten
+int cherryCheck = 0;
+int scatterTime = 0;
+int chaseTime = 0;
 
 void showMenu(){
     system(CLEAR);
@@ -89,6 +92,25 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
    ghost2.previousStatus = -1;
    ghost3.previousStatus = -1;
    ghost4.previousStatus = -1;
+
+   ghost1.mode = 's';
+   ghost2.mode = 's';
+   ghost3.mode = 's';
+   ghost4.mode = 's';
+
+   bool temp[4] = {1};
+   bool *ghost1DirStatus[4];
+
+
+   ghost2.targetPoint = pacman.coords;
+
+   setTime(scatterTime, chaseTime, 1);
+   chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+   chooseTargetPoint(ghost2, 2, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+   chooseTargetPoint(ghost3, 3, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+   chooseTargetPoint(ghost4, 4, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+
+
 	
 }
 
@@ -100,6 +122,11 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     long long int timer = 0;	//claculate the time
     
     bool pacmanCheck = 0;		//checks if pacman is alive or not;
+
+    int scatterTimeCalculator = 0;
+    int chaseTimeCalculator = 0;
+    int cherryTimeCalculator = 0;
+
     printMatrix(map,n,m,pacmanCheck,pacman.lives,timer);
     std::cout << "Enter k to start\n";
     char input = 't';
@@ -114,17 +141,15 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     	if(counter >= 50){
     		moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
     	}
-    	
-    	
-    	if(counter >= 110){
+    	if(counter >= 100){
     		moveGhost(map, ghost3, ghost3.previousStatus, pacmanCheck);
     	}
-    	
-    	if(counter >= 210){
+    	if(counter >= 150){
     		moveGhost(map, ghost3, ghost4.previousStatus, pacmanCheck);
     	}
     	
        	pacman.input_direction = getInput(pacman.input_direction);
+
        	if(pacman.input_direction == 'p'){
         	std::cout << "Do you want to save the game? Press y to save and c to continue\n";
         	input = getch();
@@ -143,6 +168,8 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
                 }
                 saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
                 break;
+            } else if(input == 'c'){
+                break;
             }
         }
         else{
@@ -154,7 +181,8 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         bool ghost2Check = ghostCheck(pacman.coords, ghost2.coords);
         bool ghost3Check = ghostCheck(pacman.coords, ghost3.coords);
         bool ghost4Check = ghostCheck(pacman.coords, ghost4.coords);
-		if(pacmanCheck || ghost1Check || ghost2Check || ghost3Check || ghost4Check){
+		
+        if(pacmanCheck || ghost1Check || ghost2Check || ghost3Check || ghost4Check){
 			pacman.lives--;
 			//clear ghosts
 			clearGhost(map, ghost1.coords, ghost1.previousStatus, n);	
@@ -167,8 +195,43 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 			pacmanCheck = 0;
 			counter = 0;
 		}
-		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
-		usleep(DELAY_TIME);
+        if(scatterTime != scatterTimeCalculator && ghost1.mode == 's'){
+            scatterTimeCalculator++;
+            chaseTimeCalculator = 0;
+        }
+        else{
+            scatterTimeCalculator = 0;
+            ghost1.mode = 'c';
+            ghost2.mode = 'c';
+            ghost3.mode = 'c';
+            ghost4.mode = 'c';
+        }
+
+        if(chaseTime != chaseTimeCalculator && ghost1.mode == 'c'){
+            chaseTimeCalculator++;
+            scatterTimeCalculator = 0;
+        }
+        else{
+            chaseTimeCalculator = 0;
+            ghost1.mode = 's';
+            ghost2.mode = 's';
+            ghost3.mode = 's';
+            ghost4.mode = 's';
+        }
+
+        chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+        chooseTargetPoint(ghost2, 2, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+        chooseTargetPoint(ghost3, 3, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+        chooseTargetPoint(ghost4, 4, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+
+        validDirections(map, ghost1.coords, ghost1DirStatus, ghost1.direction);
+
+        chooseDirection(ghost1Dirstatus, ghost1.targetPoint, ghost1.coords, ghost1.direction);
+        move(map, ghost1.coords, ghost1.direction, ghost1.previousStatus);
+		//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+		
+        
+        usleep(DELAY_TIME);
 		
 		if(counter <= 220){
 			counter++;
