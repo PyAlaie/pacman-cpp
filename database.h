@@ -91,7 +91,7 @@ void saveGameRecord(string name, int **map, int n, int m, Pacman pacman, Ghost g
         }
         File<<endl;
     }
-    File<<pacman.coords.i<<","<<pacman.coords.j<<","<<pacman.lives<<","<<pacman.input_direction<<","<<pacman.current_direction<<endl;
+    File<<pacman.coords.i<<","<<pacman.coords.j<<","<<pacman.lives<<","<<pacman.current_direction<<","<<pacman.current_direction<<endl;
     File<<g1.coords.i<<","<<g1.coords.j<<","<<g1.velocity<<","<<g1.direction<<","<<g1.previousStatus<<endl;
     File<<g2.coords.i<<","<<g2.coords.j<<","<<g2.velocity<<","<<g2.direction<<","<<g2.previousStatus<<endl;
     File<<g3.coords.i<<","<<g3.coords.j<<","<<g3.velocity<<","<<g3.direction<<","<<g3.previousStatus<<endl;

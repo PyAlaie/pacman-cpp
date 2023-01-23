@@ -27,7 +27,11 @@ int main(){
     while(true){
     showMenu();
     cin >> action;
-    vector<ranking> rr;
+
+    vector<ranking> rr; // to get rankings
+    vector<string> savedGames; // to get saved games name
+    mapData gameToLoad; // in case of loading a game ... 
+
 	switch(action){
 		case 1:
 			cout << "Pleace enter the dimensions of the game(x, y): ";
@@ -40,14 +44,28 @@ int main(){
 			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db);
 			break;
 		case 2:
+            getSavedGames(savedGames);
+            for(int i = 0; i< savedGames.size(); i++){
+                if (!(savedGames[i] == ".." || savedGames[i] == ".")){
+                    cout<<i<<". "<<savedGames[i]<<endl;
+                }
+            }
+            coloredCout("\nEnter The Index Of Game You Want To Load: ", "blue");
+
+            int a;
+            cin >> a;
+
+            readGameData(savedGames[a], gameToLoad); 
+            loadGame(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, gameToLoad);
+            Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db);
+
             break;
 		case 3:
             rr = getTopScores(db,10);
             for(int i = 0; i< rr.size(); i++){
                 cout<<rr[i].username<<" "<<rr[i].score<<endl;
             }
-            char a;
-            cin>>a;
+           
             break;
 		case 4:
             break;

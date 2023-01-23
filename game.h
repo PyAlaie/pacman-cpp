@@ -22,6 +22,7 @@ void clearGhost(int **&, Coords, int, int);
 void clearPacman(int **&, Coords);
 void saveGame(int **&);
 int ** initializeMatrix(int, int);
+void loadGame(int**&, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int&, int&, mapData);
 
 int dotCounter = 0;
 int ghostCounter = 0;       //countds the number of ghosts that had been eaten
@@ -125,22 +126,29 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     	
        	pacman.input_direction = getInput(pacman.input_direction);
        	if(pacman.input_direction == 'p'){
-        	cout << "Do you want to save the game? Press y to save and c to continue\n";
-        	input = getch();
+        	cout << "Y to save the game, C to continue, E to exit without saving\n";
         	while(true){
         		input = getch();
-        		if(input == 'c' || input == 'y')
+        		if(input == 'c' || input == 'y' || input == 'e')
         			break;
         	}
             if(input == 'y'){
                 string name;
-                coloredCout("Enter Name", "green");
+                coloredCout("Enter Name Of Your Game: ", "green");
                 cin >> name;
                 while(!isNameValid(name)){
                     coloredCout("Invalid name", "red");
                     cin >> name;
                 }
                 saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
+                break;
+            }
+            else if (input == 'c')
+            {
+                pacman.input_direction = pacman.current_direction;
+            }
+            else if (input == 'e')
+            {
                 break;
             }
         }
@@ -299,6 +307,76 @@ void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
 
 void clearPacman(int **&map, Coords pacmanCoords){
     map[pacmanCoords.i][pacmanCoords.j] = 0;
+}
+
+void loadGame(int **&map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int &n, int &m, mapData gameToLoad){
+    cout<<"mamamia";
+
+    n = gameToLoad.n;
+    m = gameToLoad.m;
+
+    map = new int*[n];
+    for (int i = 0; i < n; ++i) {
+        map[i] = new int[m];
+        for (int j = 0; j < m; ++j) {
+            map[i][j] = 0;
+        }
+    }
+
+    copy(gameToLoad.map, gameToLoad.map + gameToLoad.n, map);
+    
+    // adding pacman to the map according to the loaded game
+    // map[gameToLoad.pacman.coords.i][gameToLoad.pacman.coords.j] = 2; 
+    Coords pacmanCoor;
+    pacmanCoor.i = gameToLoad.pacman.coords.i;
+    pacmanCoor.j = gameToLoad.pacman.coords.j;
+    
+    
+    // setting the status for pacman
+    pacman.coords = gameToLoad.pacman.coords;
+    pacman.current_direction = gameToLoad.pacman.current_direction;
+    pacman.input_direction = gameToLoad.pacman.input_direction;
+    pacman.lives = gameToLoad.pacman.lives;
+    
+    
+    // adding ghosts to some place
+    Coords ghost1Coords;
+    ghost1Coords.i = gameToLoad.g1.coords.i;
+    ghost1Coords.j = gameToLoad.g1.coords.j;
+    
+    Coords ghost2Coords;
+    ghost2Coords.i = gameToLoad.g2.coords.i;
+    ghost2Coords.j = gameToLoad.g2.coords.j;
+    
+    Coords ghost3Coords;
+    ghost3Coords.i = gameToLoad.g3.coords.i;
+    ghost3Coords.j = gameToLoad.g3.coords.j;
+    
+    Coords ghost4Coords;
+    ghost4Coords.i = gameToLoad.g4.coords.i;
+    ghost4Coords.j = gameToLoad.g4.coords.j;
+    
+    //set ghosts
+    ghost1.velocity = gameToLoad.g1.velocity;
+    ghost1.direction = gameToLoad.g1.direction;
+    ghost1.coords = gameToLoad.g1.coords;
+    
+    ghost2.velocity = gameToLoad.g2.velocity;
+    ghost2.direction = gameToLoad.g2.direction;
+    ghost2.coords = gameToLoad.g2.coords;
+    
+    ghost3.velocity = gameToLoad.g3.velocity;
+    ghost3.direction = gameToLoad.g3.direction;
+    ghost3.coords = gameToLoad.g3.coords;
+    
+    ghost4.velocity = gameToLoad.g4.velocity;
+    ghost4.direction = gameToLoad.g4.direction;
+    ghost4.coords = gameToLoad.g4.coords;
+    
+    ghost1.previousStatus = gameToLoad.g1.previousStatus;
+    ghost2.previousStatus = gameToLoad.g2.previousStatus;
+    ghost3.previousStatus = gameToLoad.g3.previousStatus;
+    ghost4.previousStatus = gameToLoad.g4.previousStatus;
 }
 
 #endif
