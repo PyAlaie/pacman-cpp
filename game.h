@@ -11,6 +11,7 @@
 #include "database.h"
 
 #include "maze_generator_god_mode.h"
+using namespace std;
 
 void showMenu();
 void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
@@ -33,7 +34,7 @@ void showMenu(){
     coloredCout("2. Load Game\n", "blue");
     coloredCout("3. Ranking\n", "blue");
     coloredCout("4. Exit\n\n", "blue");
-    cout<<"-> ";
+    std::cout<<"-> ";
 }
 void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3, Ghost &ghost4, int n, int m){
 
@@ -100,7 +101,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     
     bool pacmanCheck = 0;		//checks if pacman is alive or not;
     printMatrix(map,n,m,pacmanCheck,pacman.lives,timer);
-    cout << "Enter k to start\n";
+    std::cout << "Enter k to start\n";
     char input = 't';
     while(true){
        	input = getch();
@@ -125,7 +126,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     	
        	pacman.input_direction = getInput(pacman.input_direction);
        	if(pacman.input_direction == 'p'){
-        	cout << "Do you want to save the game? Press y to save and c to continue\n";
+        	std::cout << "Do you want to save the game? Press y to save and c to continue\n";
         	input = getch();
         	while(true){
         		input = getch();
@@ -135,10 +136,10 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
             if(input == 'y'){
                 string name;
                 coloredCout("Enter Name", "green");
-                cin >> name;
+                std::cin >> name;
                 while(!isNameValid(name)){
                     coloredCout("Invalid name", "red");
-                    cin >> name;
+                    std::cin >> name;
                 }
                 saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
                 break;
@@ -178,10 +179,10 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     }
     
     int score = calScore(dotCounter, ghostCounter);
-    cout << "Game Over!\nYour score is " << score<<endl;
+    std::cout << "Game Over!\nYour score is " << score<<endl;
     string username;
     coloredCout("Enter Name: ", "blue");
-    cin >> username;
+    std::cin >> username;
     saveRankingRecord(db, username, score, timer);
     return;
     // while(true){
@@ -226,41 +227,41 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
             {
             case 0:
                 // path
-                cout<<".";
+                std::cout<<".";
                 dotCounter++;
                 break;
             case 1:
                 // wall
-                cout<<"#";
+                std::cout<<"#";
                 break;
             case 2:
                 // pacman
                 if(!pacmanCheck){
-                	cout<<"*";
+                	std::cout<<"*";
                 }
                 flag = 0;
                 break;
             case -1:
                 // condidate
-                cout<<" ";
+                std::cout<<" ";
                 break;
             case -2:
             	// ghost
-            	cout << "@";
+            	std::cout << "@";
             	break;
             }
         }
         if(i == 0){
-        	cout << "			TIME: " << timer << endl;
+        	std::cout << "			TIME: " << timer << endl;
         }
         else if(i == 1){
-        	cout << "			LIVES: " << lives << endl;
+        	std::cout << "			LIVES: " << lives << endl;
         }
         else if(i == 2){
-        	cout << "			Whenever wnated to stop or save the game enter p" << endl;
+        	std::cout << "			Whenever wnated to stop or save the game enter p" << endl;
         }
         else{
-	        cout<<endl;
+	        std::cout<<endl;
 	    }
     }
     
@@ -280,16 +281,16 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
 
 void coloredCout(string text, string color){
     if(color == "green"){
-        cout << ESC << ";" << GREEN_TXT <<"m"<< text << RESET;
+        std::cout << ESC << ";" << GREEN_TXT <<"m"<< text << RESET;
     }
     else if(color == "red"){
-        cout << ESC << ";" << RED_TXT <<"m"<< text << RESET;
+        std::cout << ESC << ";" << RED_TXT <<"m"<< text << RESET;
     }
     else if(color == "yellow"){
-        cout << ESC << ";" << YELLOW_TXT <<"m"<< text << RESET;
+        std::cout << ESC << ";" << YELLOW_TXT <<"m"<< text << RESET;
     }
     else if(color == "blue"){
-        cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
+        std::cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
     }
 }
 void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
