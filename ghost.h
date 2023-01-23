@@ -5,37 +5,43 @@
 #include "structs.h"
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
 struct Ghost{
 	Coords coords;
 	Coords targetPoint;
-	bool dirStatus[4]; //0 for w, 1 for d, 2 for s and 3 for a
 	char mode;  //s for scatter, c for chase and e for deadwalk
 	int velocity;
 	char direction;
 	int previousStatus;
 };
+
+void setDir(vector<bool> &dirStatus){
+	for(unsigned int i = 0; i < 4; i++){
+		dirStatus[i] = true;
+   }
+}
 int getDist(Coords targetPoint, int dir, Coords ghostCoords){
 	int dist = 0;
 	switch (dir)
 	{
 	case 0:
-		dist = pow(targetPoint.i - (ghostCoords.i + 1), 2) + pow(targetPoint.j - ghostCoords.j, 2); 
+		dist = pow(targetPoint.i - (ghostCoords.i - 1), 2) + pow(targetPoint.j - ghostCoords.j, 2); 
 		break;
 	case 1:
 		dist = pow(targetPoint.i - ghostCoords.i, 2) + pow(targetPoint.j - (ghostCoords.j + 1), 2); 
 		break;
 	case 2:
-		dist = pow(targetPoint.i - ghostCoords.i, 2) + pow(targetPoint.j - (ghostCoords.j - 1), 2); 
+		dist = pow(targetPoint.i - (ghostCoords.i + 1), 2) + pow(targetPoint.j - ghostCoords.j, 2); 
 		break;
 	case 3:
-		dist = pow(targetPoint.i - (ghostCoords.i - 1), 2) + pow(targetPoint.j - ghostCoords.j, 2); 
+		dist = pow(targetPoint.i - ghostCoords.i, 2) + pow(targetPoint.j - (ghostCoords.j - 1), 2); 
 		break;	
 	}
 
-	dist = sqrt(dist);
+	dist = (int)	sqrt(dist);
 	return dist;
 }
 
@@ -116,131 +122,141 @@ void moveGhost(int **&ground, Ghost &ghost, int &previousStatus, bool &pacmanChe
 	
 	
 }
+bool isValidDirection(int **map, Coords ghostCoords, char currentDir, char inputDir){
+	if(isThereWall(map, ghostCoords, inputDir)){
+		return false;
+	}
 
-void move(int **&map, Coords &ghostCoords, char dir, int &previousStatus){
-	switch (dir)
+	// if((inputDir == 'w' && currentDir == 's') ||
+	// 	 (inputDir == 's' && currentDir == 'w') ||
+	// 	 (inputDir == 'a' && currentDir == 'd') ||
+	// 	 (inputDir == 'd' && currentDir == 'a') ){
+	// 		return false;
+	// 	 }
+	return true;
+
+}
+
+void move(int **&map, Ghost &ghost){
+	switch (ghost.direction)
 	{
 	case 'w':
-		map[ghostCoords.i][ghostCoords.j] = previousStatus;
-		ghostCoords.i++;
-		map[ghostCoords.i][ghostCoords.j] = -2;
-		if(map[ghostCoords.i][ghostCoords.j] != -2 && map[ghostCoords.i][ghostCoords.j] != 2){
-		    	previousStatus = map[ghostCoords.i][ghostCoords.j];
+		map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+		ghost.coords.i--;
+		// ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
+		if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
+		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
 		}
+		map[ghost.coords.i][ghost.coords.j] = -2;
 		break;
 	case 'd':
-		map[ghostCoords.i][ghostCoords.j] = previousStatus;
-		ghostCoords.j++;
-		map[ghostCoords.i][ghostCoords.j] = -2;
-		if(map[ghostCoords.i][ghostCoords.j] != -2 && map[ghostCoords.i][ghostCoords.j] != 2){
-		    	previousStatus = map[ghostCoords.i][ghostCoords.j];
+		map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+		ghost.coords.j++;
+		// ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
+		if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
+		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
 		}
+		map[ghost.coords.i][ghost.coords.j] = -2;
 		break;
 	case 's':
-		map[ghostCoords.i][ghostCoords.j] = previousStatus;
-		ghostCoords.i--;
-		map[ghostCoords.i][ghostCoords.j] = -2;
-		if(map[ghostCoords.i][ghostCoords.j] != -2 && map[ghostCoords.i][ghostCoords.j] != 2){
-		    	previousStatus = map[ghostCoords.i][ghostCoords.j];
+		map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+		ghost.coords.i++;
+		// ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
+		if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
+		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
 		}
+		map[ghost.coords.i][ghost.coords.j] = -2;
 		break;
 	case 'a':
-		map[ghostCoords.i][ghostCoords.j] = previousStatus;
-		ghostCoords.j--;
-		map[ghostCoords.i][ghostCoords.j] = -2;
-		if(map[ghostCoords.i][ghostCoords.j] != -2 && map[ghostCoords.i][ghostCoords.j] != 2){
-		    	previousStatus = map[ghostCoords.i][ghostCoords.j];
+		map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+		ghost.coords.j--;	
+		// ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
+		if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
+		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
 		}
+		map[ghost.coords.i][ghost.coords.j] = -2;
 		break;
 	}
 
 }
 
-char chooseDirection(bool *&dirStatus, Coords targetPoint, Coords ghostCoords, char currentDir){ //chooses the shortest path dir
+char chooseDirection(int **map, Coords targetPoint, Coords ghostCoords, char currentDir){ //chooses the shortest path dir
 	int minDist = 0;
 	bool flag = 1;
-	int dir = 4;
+	char dir = 'w';
+	int direction = 4;
 
 	for(int i = 0; i < 4; i++){
 		int temp;
-		if(dirStatus[i]){
+		switch(i){
+			case 0:
+				dir = 'w';
+				break;
+			case 1:
+				dir = 'd';
+				break;
+			case 2:
+				dir = 's';
+				break;
+			case 3:
+				dir = 'a';
+				break;
+		}
+		if(isValidDirection(map, ghostCoords, currentDir, dir)){
 			temp = getDist(targetPoint, i, ghostCoords);
 			if(flag || minDist < temp){
+				flag = 0;
 				minDist = temp;
-				dir = i;
+				direction = i;
 			}
 		}
 	}
 
-	switch (dir){
-	case 1:
+	switch (direction){
+	case 0:
 		return 'w';
 		break;	
-	case 2:
+	case 1:
 		return 'd';
 		break;
-	case 3:
+	case 2:
 		return 's';
 		break;
-	case 4:
+	case 3:
 		return 'a';
 		break;
 	}
 	return currentDir;
 }
 
-void validDirections(int **map, Coords ghostCoords, bool *&dirStatus, char currentDir){
-	switch (currentDir)
-	{
-	case 'w':
-		dirStatus[2] = 0;
-		break;
-	case 'a':
-		dirStatus[1] = 0;
-		break;
-	case 'd':
-		dirStatus[3] = 0;
-		break;
-	case 's':
-		dirStatus[0] = 0;
-		break;
-	}
-	if(isThereWall(map, ghostCoords, 'w')){
-		dirStatus[0] = 0;
-	} else if(isThereWall(map, ghostCoords, 'd')){
-		dirStatus[1] = 0;
-	} else if(isThereWall(map, ghostCoords, 's')){
-		dirStatus[2] = 0;
-	}else if(isThereWall(map, ghostCoords, 'a')){
-		dirStatus[3] = 0;
-	}
-}
+
 
 void chooseTargetPoint(Ghost &ghost, int ghostNumber, Coords pacman, int n, int m, char pacmanDir,
 						 Coords blinky, Coords pinkyTargetPoint){
 	
 	int xDist = abs(blinky.i - pinkyTargetPoint.i);
 	int yDist = abs(blinky.j - pinkyTargetPoint.j);
-	
+	// ghost.mode = 'c';
 	if(ghost.mode == 's'){
 		switch (ghostNumber)
 		{
 		case 1:
-			if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == m - 2 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){ 
-				int random = rand();
-				ghost.targetPoint.i = random % (n-1);
-				ghost.targetPoint.j = random % (m-1);
-			 } else if(!(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == m - 2) &&
-			 			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ //target point: bottom right
-						ghost.targetPoint.i = n - 2;
-						ghost.targetPoint.j = m - 2;
-					}
+			// if(ghost.targetPoint.i == n - 2 || ghost.targetPoint.j == m - 2 ||
+			//  getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ 
+				// int random = rand();
+				// ghost.targetPoint.i = random % (n-1);
+				// ghost.targetPoint.j = random % (m-1);
+			//  			usleep(1000000);
+			//  } else if(!(ghost.targetPoint.i == n - 2 || ghost.targetPoint.j == m - 2) ||
+			//  			getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ //target point: bottom right
+			// 			ghost.targetPoint.i = n - 2;
+			// 			ghost.targetPoint.j = m - 2;
+			// 		}
 			break;
 
 		case 2:
 			if(ghost.targetPoint.i == 1 && ghost.targetPoint.j == m - 2 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){ 
+			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ 
 				int random = rand();
 				ghost.targetPoint.i = random % (n-1);
 				ghost.targetPoint.j = random % (m-1);
@@ -253,7 +269,7 @@ void chooseTargetPoint(Ghost &ghost, int ghostNumber, Coords pacman, int n, int 
 
 		case 3:
 			if(ghost.targetPoint.i == 1 && ghost.targetPoint.j == 1 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){
+			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
 				int random = rand();
 				ghost.targetPoint.i = random % (n-1);
 				ghost.targetPoint.j = random % (m-1);
@@ -266,7 +282,7 @@ void chooseTargetPoint(Ghost &ghost, int ghostNumber, Coords pacman, int n, int 
 
 		case 4:
 			if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){
+			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
 				int random = rand();
 				ghost.targetPoint.i = random % (n-1);
 				ghost.targetPoint.j = random % (m-1);
@@ -279,7 +295,7 @@ void chooseTargetPoint(Ghost &ghost, int ghostNumber, Coords pacman, int n, int 
 		}
 	}
 
-	if(ghost.mode == 'c'){
+	else if(ghost.mode == 'c'){
 		switch (ghostNumber)
 		{
 		case 1:
@@ -333,6 +349,86 @@ void chooseTargetPoint(Ghost &ghost, int ghostNumber, Coords pacman, int n, int 
 			break;
 		}
 	}
+}
+
+void updateGhostDirection(int ** map, Ghost &g){
+	int wallsAround = 0;
+
+	// 0w 1d 2s 3a
+	bool directions[4] = {true,true,true,true};
+
+	switch (g.direction)
+	{
+	case 'w':
+		directions[2] = false;
+		break;
+	case 's':
+		directions[0] = false;
+		break;
+	case 'd':
+		directions[3] = false;
+		break;
+	case 'a':
+		directions[1] = false;
+		break;
+	}
+
+	if(map[g.coords.i+1][g.coords.j] == 1){wallsAround++; directions[2] = false;}
+	if(map[g.coords.i-1][g.coords.j] == 1){wallsAround++; directions[0] = false;}
+	if(map[g.coords.i][g.coords.j+1] == 1){wallsAround++; directions[1] = false;}
+	if(map[g.coords.i][g.coords.j-1] == 1){wallsAround++; directions[3] = false;}
+
+	vector<char> d;
+	if(directions[0] == true){d.push_back('w');}
+	if(directions[1] == true){d.push_back('d');}
+	if(directions[2] == true){d.push_back('s');}
+	if(directions[3] == true){d.push_back('a');}
+
+	if(wallsAround <= 1){
+		// usleep(3000000);
+		int temp = rand() % d.size();
+		char randDirection = d[temp];
+		g.direction = randDirection;
+		return;
+	}
+	else if (isThereWall(map, g.coords,g.direction)){
+		int random = rand() % 4;
+		char newDirection;
+		switch(random){
+			case 0:
+				newDirection = 'w';
+				break;
+			case 1:
+				newDirection = 's';
+				break;
+			case 2:
+				newDirection = 'd';
+				break;
+			case 3:
+				newDirection = 'a';
+				break;
+		}
+
+		while(isThereWall(map, g.coords, newDirection)){   
+			random = rand() % 4;
+			switch(random){
+			case 0:
+				newDirection = 'w';
+				break;
+			case 1:
+				newDirection = 's';
+				break;
+			case 2:
+				newDirection = 'd';
+				break;
+			case 3:
+				newDirection = 'a';
+				break;
+			}
+		}
+		g.direction = newDirection;
+	}
+
 }
 
 #endif

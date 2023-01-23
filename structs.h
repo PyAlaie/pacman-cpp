@@ -14,8 +14,8 @@ struct Coords
 
 void setTime(int &scatterTime, int &chaseTime, int choosenLevel){
     if(choosenLevel == 1){
-        scatterTime = 200;
-        chaseTime = 100;
+        scatterTime = 100;
+        chaseTime = 200;
     }
     else if(choosenLevel == 2){
         scatterTime = 150;
