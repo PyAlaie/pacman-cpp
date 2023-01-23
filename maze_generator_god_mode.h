@@ -28,9 +28,40 @@ bool canExpandToDown(int **arr, int n, int m, int i, int j);
 void drawGhostHouse(int **&arr, int n, int m);
 void drawTempLine(int **&arr, int n, int m);
 int ** initializeMatrix(int, int);
+void drawRandomCherries(int **&arr, int n, int m);
+void updateCherryPossiblePoints(int **arr, int n, int m, vector<Coords> &points);
+
+void updateCherryPossiblePoints(int **arr, int n, int m, vector<Coords> &points){
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            if(arr[i][j] == 0){
+                Coords p;
+                p.i = i;
+                p.j = j;
+                points.push_back(p);
+            }
+        }
+    }
+}
+
+void drawRandomCherries(int **&arr, int n, int m){
+    vector<Coords> points;
+    for(int i = 0; i < 4; i++){
+        updateCherryPossiblePoints(arr,n,m,points);
+        Coords point = chooseRandomStartingPoint(points);
+        arr[point.i][point.j] = 3;
+        points.clear();
+    }
+}
 
 void drawTempLine(int **&arr, int n, int m){
     int width = m/2+1;
+    if(m % 2 == 1){
+        width = m/2+1;
+    }
+    else{
+        // width = m/2;
+    }
     for(int i = 0; i < n; i ++){
         arr[i][width] = 1;
     }
@@ -241,7 +272,7 @@ void drawGodMaze(int **&arr, int n, int m){
 
     blankGhostHouse(arr,n,m);
     mirrorMaze(arr,n,m);
-    
+    drawRandomCherries(arr,n,m);
     // system("clear");
     // printMatrix(arr,n,m);
 }
@@ -281,12 +312,16 @@ void printMatrix(int **arr, int n, int m){
                 flag = 0;
                 break;
             case -1:
-                // condidate
-                cout<<"o";
+                // blank
+                cout<<" ";
                 break;
             case -2:
             	// ghost
             	cout << "@";
+            	break;
+            case 3:
+            	// cherry
+            	cout << "C";
             	break;
             }
         }
@@ -337,6 +372,9 @@ vector<char> deadends(int **arr, int i, int j){
 
 void mirrorMaze(int **&map, int n, int m){
     int half = m/2 +1;
+    // if( m % 2 ==0){
+    //     half = m/2; 
+    // }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < half; j++){
             map[i][m-1-j] = map[i][j];

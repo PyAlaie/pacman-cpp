@@ -45,6 +45,36 @@ bool isThereWall(int **arr, Coords coords, char direction){
     }
 }
 
+bool isThereCherry(int **arr, Coords coords, char direction){   
+    switch (direction)
+    {
+    case 'w':
+        if(arr[coords.i - 1][coords.j] == 3){
+            return true;
+        }
+        return false;
+        break;
+    case 's':
+        if(arr[coords.i + 1][coords.j] == 3){
+            return true;
+        }
+        return false;
+        break;
+    case 'd':
+        if(arr[coords.i][coords.j + 1] == 3){
+            return true;
+        }
+        return false;
+        break;
+    case 'a':
+        if(arr[coords.i][coords.j - 1] == 3){
+            return true;
+        }
+        return false;
+        break;
+    }
+}
+
 bool ghostCheck(Coords pacman, Coords ghost){
     Coords minCoor;
     int dist = 0, xDist, yDist;
@@ -58,13 +88,14 @@ bool ghostCheck(Coords pacman, Coords ghost){
 
 }
 
-int calScore(int dotCounter, int ghostCounter){
+int calScore(int dotCounter, int ghostCounter, int cherryCount){
     int score = 0;
-    dotCounter *= 10;
+    cherryCount *=5;
     for(int i = 1; i <= ghostCounter; i++){
-        score += i * 100;
+        score += i * 10;
     }
     score += dotCounter;
+    score += cherryCount;
     return score;
 }
 
