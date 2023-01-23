@@ -26,6 +26,8 @@ void loadGame(int**&, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int&, int&, mapDa
 
 int dotCounter = 0;
 int ghostCounter = 0;       //countds the number of ghosts that had been eaten
+bool cherryCheck = 0;
+int cherryTime = 0;
 
 void showMenu(){
     system(CLEAR);
@@ -154,7 +156,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         }
         else{
 		updatePacmanDirection(map,pacman);
-		movePacman(map,pacman,pacmanCheck);
+		movePacman(map,pacman,pacmanCheck, cherryCheck, cherryTime);
 		system(CLEAR);
 		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
         bool ghost1Check = ghostCheck(pacman.coords, ghost1.coords);

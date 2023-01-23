@@ -68,8 +68,8 @@ int main(){
            
             break;
 		case 4:
+			return 0;
             break;
-			// return 0;
 	}
     }
 
