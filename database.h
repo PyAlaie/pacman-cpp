@@ -28,6 +28,8 @@ struct mapData
     Ghost g2;
     Ghost g3;
     Ghost g4;
+    bool cherryEaten;
+    int cherryExpire;
 };
 
 bool initializeDB(sqlite3 *&db);
@@ -82,7 +84,7 @@ vector<ranking> getTopScores(sqlite3 *db, int count){
     return res;
 }
 
-void saveGameRecord(string name, int **map, int n, int m, Pacman pacman, Ghost g1, Ghost g2, Ghost g3, Ghost g4){
+void saveGameRecord(string name, int **map, int n, int m, Pacman pacman, Ghost g1, Ghost g2, Ghost g3, Ghost g4, bool cherryEaten, int cherryExpire){
     ofstream File("saved_games/" + name);
     File<<n<<endl<<m<<endl;
     for(int i = 0; i<n; i++){
@@ -91,7 +93,7 @@ void saveGameRecord(string name, int **map, int n, int m, Pacman pacman, Ghost g
         }
         File<<endl;
     }
-    File<<pacman.coords.i<<","<<pacman.coords.j<<","<<pacman.lives<<","<<pacman.current_direction<<","<<pacman.current_direction<<endl;
+    File<<pacman.coords.i<<","<<pacman.coords.j<<","<<pacman.lives<<","<<pacman.current_direction<<","<<pacman.current_direction<<","<<cherryEaten<<","<<cherryExpire<<endl;
     File<<g1.coords.i<<","<<g1.coords.j<<","<<g1.velocity<<","<<g1.direction<<","<<g1.previousStatus<<endl;
     File<<g2.coords.i<<","<<g2.coords.j<<","<<g2.velocity<<","<<g2.direction<<","<<g2.previousStatus<<endl;
     File<<g3.coords.i<<","<<g3.coords.j<<","<<g3.velocity<<","<<g3.direction<<","<<g3.previousStatus<<endl;
@@ -149,6 +151,14 @@ void readGameData(string name, mapData &data){
     data.pacman.lives = stoi(tokens[2]);
     data.pacman.input_direction = tokens[3][0];
     data.pacman.current_direction = tokens[4][0];
+    
+    if(tokens[5] == "0"){
+        data.cherryExpire = true;
+    }
+    else{
+        data.cherryEaten = false;
+    }
+    data.cherryExpire = stoi(tokens[6]);
 
     // getting ghost1 data
     getline(File,line);

@@ -8,6 +8,9 @@ using namespace std;
 int main(){
     int **map;
 
+    system(CLEAR);
+    typeEffect("\nWelcome to Kokonut Pacman!\n", "green");
+    usleep(500000);
 
     sqlite3 *db;
     initializeDB(db);
@@ -20,7 +23,6 @@ int main(){
     Ghost ghost2;
     Ghost ghost3;
     Ghost ghost4;
-    
     
     int action;
     int n, m;
@@ -65,10 +67,14 @@ int main(){
             for(int i = 0; i< rr.size(); i++){
                 cout<<rr[i].username<<" "<<rr[i].score<<endl;
             }
-           
+
+            char b;
+            cin>>b;
             break;
 		case 4:
 			return 0;
+            break;
+        default:
             break;
 	}
     }
