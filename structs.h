@@ -10,9 +10,24 @@ struct Coords
 {
     int i;
     int j;
-    bool isThereWall(int **arr, Coords coords, char direction);
-    bool pacmanCheck(int **&map, char pacmanDir, char ghostDir);
 };
+
+void setTime(int &scatterTime, int &chaseTime, int choosenLevel){
+    if(choosenLevel == 1){
+        scatterTime = 100;
+        chaseTime = 200;
+    }
+    else if(choosenLevel == 2){
+        scatterTime = 150;
+        chaseTime = 100;
+    }
+    else{
+        scatterTime = 150;
+        chaseTime = 150;
+    }
+}
+
+
 
 
 bool isThereWall(int **arr, Coords coords, char direction){   

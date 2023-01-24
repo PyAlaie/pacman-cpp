@@ -18,7 +18,7 @@ using namespace std;
 void showMenu();
 void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
 void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int, sqlite3 *&db);
-void printMatrix(int **, int, int, bool&, int, long long int);
+void printMatrix(int **, int, int, bool&, int, long long int, Coords, Coords, Coords, Coords, char);
 char getInput(char);
 void coloredCout(string text, string color);
 void clearGhost(int **&, Coords, int, int);
@@ -32,6 +32,9 @@ int ghostCounter = 0;       //countds the number of ghosts that had been eaten
 bool cherryCheck = 0;
 int cherryTime = 0;
 int cherryCounter = 0;
+// int cherryCheck = 0;
+int scatterTime = 0;
+int chaseTime = 0;
 
 void showMenu(){
     system(CLEAR);
@@ -60,7 +63,7 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
     // adding ghosts to some place
     Coords ghost1Coords;
     ghost1Coords.i = n/4+1;
-    ghost1Coords.j = m/2;
+    ghost1Coords.j = m/2 - 2;
     
     Coords ghost2Coords;
     ghost2Coords.i = n/4 + 1;
@@ -95,6 +98,28 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
    ghost2.previousStatus = -1;
    ghost3.previousStatus = -1;
    ghost4.previousStatus = -1;
+
+   ghost1.mode = 's';
+   ghost2.mode = 's';
+   ghost3.mode = 's';
+   ghost4.mode = 's';
+
+
+   ghost2.targetPoint = pacman.coords;
+
+   setTime(scatterTime, chaseTime, 1);
+   /*chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+   chooseTargetPoint(ghost2, 2, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+   chooseTargetPoint(ghost3, 3, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+   chooseTargetPoint(ghost4, 4, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);*/
+
+//    ghost1.targetPoint. i = n - 2;
+//    ghost1.targetPoint.j = m - 2;
+
+   ghost2.targetPoint. i = 2;
+   ghost2.targetPoint.j = m - 2;
+
+
 	
 }
 
@@ -106,9 +131,13 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     long long int timer = 0;	//claculate the time
     
     bool pacmanCheck = 0;		//checks if pacman is alive or not;
+
+    int scatterTimeCalculator = 0;
+    int chaseTimeCalculator = 0;
+    int cherryTimeCalculator = 0;
     bool flagCherry = 0;
-    
-    printMatrix(map,n,m,pacmanCheck,pacman.lives,timer);
+
+    printMatrix(map,n,m,pacmanCheck,pacman.lives,timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, 's');
     std::cout << "Enter k to start\n";
     char input = 't';
     while(true){
@@ -118,21 +147,26 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     }
     while(pacman.lives != 0){
     	//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
-    	
+
+
     	if(counter >= 50){
-    		moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
+            updateGhostDirection(map, ghost2);
+            move(map, ghost2);
+    		// moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
     	}
-    	
-    	
-    	if(counter >= 110){
-    		moveGhost(map, ghost3, ghost3.previousStatus, pacmanCheck);
+    	if(counter >= 10){
+            updateGhostDirection(map, ghost3);
+            move(map, ghost3);
+    		// moveGhost(map, ghost3, ghost3.previousStatus, pacmanCheck);
     	}
-    	
-    	if(counter >= 210){
-    		moveGhost(map, ghost3, ghost4.previousStatus, pacmanCheck);
+    	if(counter >= 150){
+            updateGhostDirection(map, ghost4);
+            move(map, ghost4);
+    		// moveGhost(map, ghost4, ghost4.previousStatus, pacmanCheck);
     	}
     	
        	pacman.input_direction = getInput(pacman.input_direction);
+
        	if(pacman.input_direction == 'p'){
         	cout << "Y to save the game, C to continue, E to exit without saving\n";
         	while(true){
@@ -149,6 +183,8 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
                     std::cin >> name;
                 }
                 saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
+                break;
+            } else if(input == 'c'){
                 break;
             }
             else if (input == 'c')
@@ -173,7 +209,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
             flagCherry = 1;
             cherryTime--;
         }
-		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer);
+		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, ghost1.mode);
         bool ghost1Check = ghostCheck(pacman.coords, ghost1.coords);
         bool ghost2Check = ghostCheck(pacman.coords, ghost2.coords);
         bool ghost3Check = ghostCheck(pacman.coords, ghost3.coords);
@@ -210,8 +246,58 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
                 ghost4.coords.j = m/2;
             }
         }
-		moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
-		usleep(DELAY_TIME);
+		
+
+
+        if(scatterTime != scatterTimeCalculator && ghost1.mode == 's'){
+            scatterTimeCalculator++;
+            chaseTimeCalculator = 0;
+        }
+        else{
+            scatterTimeCalculator = 0;
+            ghost1.mode = 'c';
+            ghost2.mode = 'c';
+            ghost3.mode = 'c';
+            ghost4.mode = 'c';
+        }
+
+        if(chaseTime != chaseTimeCalculator && ghost1.mode == 'c'){
+            chaseTimeCalculator++;
+            scatterTimeCalculator = 0;
+        }
+        else{
+            chaseTimeCalculator = 0;
+            ghost1.mode = 's';
+            ghost2.mode = 's';
+            ghost3.mode = 's';
+            ghost4.mode = 's';
+        }
+
+        // if(abs(ghost1.targetPoint.i - ghost1.coords.i) < 2 && abs(ghost1.targetPoint.j - ghost1.coords.j) < 2){
+        //     chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+        // }
+        // chooseTargetPoint(ghost2, 2, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+        // chooseTargetPoint(ghost3, 3, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+        // chooseTargetPoint(ghost4, 4, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
+
+        // ghost1.direction = chooseDirection(map, ghost1.targetPoint, ghost1.coords, ghost1.direction);
+        // ghost2.direction = chooseDirection(map, ghost2.targetPoint, ghost2.coords, ghost2.direction);
+
+        updateGhostDirection(map, ghost1);
+        move(map, ghost1);
+
+        updateGhostDirection(map, ghost2);
+        move(map, ghost2);
+
+        updateGhostDirection(map, ghost3);
+        move(map, ghost3);
+
+        updateGhostDirection(map, ghost4);
+        move(map, ghost4);
+		//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+		
+        
+        usleep(DELAY_TIME);
 		
 		if(counter <= 220){
 			counter++;
@@ -231,11 +317,6 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     std::cin >> username;
     saveRankingRecord(db, username, score, timer);
     return;
-    // while(true){
-    //    	input = getch();
-    //    	if(input == 'b')
-    //    		break;
-    // }
 }
 
 char getInput(char current_dir){
@@ -264,7 +345,8 @@ char getInput(char current_dir){
     return dir;
 }
 
-void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long long int timer){   
+void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long long int timer, 
+                Coords ghost1, Coords ghost2, Coords ghost3, Coords ghost4, char ghostMode){   
 	dotCounter = 0;				//if there is no dot in the map, you are the winner!	
 	bool flag = 1;				//checks if there is pacman in map
     for(int i = 0; i < n; i++){
@@ -292,16 +374,21 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
                 std::cout<<" ";
                 break;
             case -2:
-            	// ghost
                 if(cherryCheck)
+                    cout << "@";
+            	else if(i == ghost1.i && j == ghost1.j)
+                    coloredCout("@", "red");
+                else if(i == ghost2.i && j == ghost2.j)
+                    coloredCout("@", "green");
+                else if(i == ghost3.i && j == ghost3.j)
                     coloredCout("@", "blue");
-                else
-                	cout << "@";
+                else if(i == ghost4.i && j == ghost4.j)
+                    coloredCout("@", "yellow");
+            	//std::cout << "@";
             	break;
             case 3:
-            	// cherry
-            	cout << "C";
-            	break;
+                cout << "c";
+                break;
             }
         }
         if(i == 0){
@@ -312,6 +399,9 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
         }
         else if(i == 2){
         	std::cout << "			Whenever wnated to stop or save the game enter p" << endl;
+        }
+        else if(i == 3){
+            std::cout << "          mode: " << ghostMode << endl;
         }
         else{
 	        std::cout<<endl;
