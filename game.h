@@ -183,26 +183,26 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
             }
 
             if(counter >= 50 && timer % 6 == 0){
-                ghost1.targetPoint = pacman.coords;
-                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
+                ghost2.targetPoint = pacman.coords;
+                findpaths(map, ghost2.coords, ghost2.targetPoint, ghost2.path);
 
-                ghost1.path.erase(ghost1.path.begin());
-                newMove(map,ghost1, ghost1.path.front());
+                ghost2.path.erase(ghost2.path.begin());
+                newMove(map,ghost2, ghost2.path.front());
             }
 
             if(counter >= 10 && timer % 6 == 0){
-                ghost1.targetPoint = pacman.coords;
-                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
-                ghost1.path.erase(ghost1.path.begin());
-                newMove(map,ghost1, ghost1.path.front());
+                ghost3.targetPoint = pacman.coords;
+                findpaths(map, ghost3.coords, ghost3.targetPoint, ghost3.path);
+                ghost3.path.erase(ghost3.path.begin());
+                newMove(map,ghost3, ghost3.path.front());
             }
 
             if(counter >= 150 && timer % 6 == 0){
-                ghost1.targetPoint = pacman.coords;
-                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
+                ghost4.targetPoint = pacman.coords;
+                findpaths(map, ghost4.coords, ghost4.targetPoint, ghost4.path);
 
-                ghost1.path.erase(ghost1.path.begin());
-                newMove(map,ghost1, ghost1.path.front());
+                ghost1.path.erase(ghost4.path.begin());
+                newMove(map,ghost4, ghost4.path.front());
             }
         }
     	

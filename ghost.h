@@ -301,11 +301,11 @@ void findpaths(int **map, Coords src, Coords dst, vector<Coords>& path)
 
 void newMove(int **&map, Ghost &ghost, Coords target){
 	map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+	ghost.coords = target;
 	if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
 		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
 		}
 	map[target.i][target.j] = -2;
-	ghost.coords = target;
 
 }
 
