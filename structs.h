@@ -12,9 +12,21 @@ struct Coords
     int j;
 };
 
+int operator==(const Coords& c1, const Coords& c2) {
+    return c1.i == c2.i && c1.j == c2.j;
+}
+
+int operator<(const Coords&c1, const Coords& c2){
+    return c1.i < c2.i && c1.j < c2.j;
+}
+
+int operator>(const Coords&c1, const Coords& c2){
+    return c1.i > c2.i && c1.j > c2.j;
+}
+
 void setTime(int &scatterTime, int &chaseTime, int choosenLevel){
     if(choosenLevel == 1){
-        scatterTime = 100;
+        scatterTime = 10;
         chaseTime = 200;
     }
     else if(choosenLevel == 2){
@@ -30,7 +42,8 @@ void setTime(int &scatterTime, int &chaseTime, int choosenLevel){
 
 
 
-bool isThereWall(int **arr, Coords coords, char direction){   
+bool isThereWall(int **arr, Coords coords, char direction){
+    // cout << "XXX: " << coords.i << "   " << coords.j << endl;
     switch (direction)
     {
     case 'w':
@@ -103,14 +116,14 @@ bool ghostCheck(Coords pacman, Coords ghost){
 
 }
 
-int calScore(int dotCounter, int ghostCounter, int cherryCount){
+int calScore(int dotCounter, int ghostCounter, int cherryCounter){
     int score = 0;
-    cherryCount *=5;
+    cherryCounter *= 5;
     for(int i = 1; i <= ghostCounter; i++){
         score += i * 10;
     }
     score += dotCounter;
-    score += cherryCount;
+    score += cherryCounter;
     return score;
 }
 
