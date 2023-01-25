@@ -105,12 +105,11 @@ bool ghostCheck(Coords pacman, Coords ghost){
 
 int calScore(int dotCounter, int ghostCounter, int cherryCount){
     int score = 0;
-    cherryCount *=5;
-    for(int i = 1; i <= ghostCounter; i++){
-        score += i * 10;
-    }
+    cherryCount *= 5;
+    ghostCounter *= 10;
     score += dotCounter;
     score += cherryCount;
+    score += ghostCounter;
     return score;
 }
 

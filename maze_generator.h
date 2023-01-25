@@ -21,7 +21,6 @@ vector<char> deadends(int **arr, int i, int j);
 void drawBorders(int **&, int, int);
 int ** initializeMatrix(int, int);
 
-
 Coords selectRandomPoint(int n, int m){
     srand((unsigned) time(NULL));
     Coords res;

@@ -27,6 +27,7 @@ bool canExpandToDown(int **arr, int n, int m, int i, int j);
 void updateCherryPossiblePoints(int **arr, int n, int m, vector<Coords> &points);
 void drawRandomCherries(int **&arr, int n, int m);
 
+// functions that are not being used
 bool removeDeadends(int **&arr, int n, int m);
 vector<char> deadends(int **arr, int i, int j);
 bool isASingleDot(int **arr, int n, int m, int i, int j);
@@ -56,12 +57,6 @@ void drawRandomCherries(int **&arr, int n, int m){
 
 void drawTempLine(int **&arr, int n, int m){
     int width = m/2+1;
-    if(m % 2 == 1){
-        width = m/2+1;
-    }
-    else{
-        // width = m/2;
-    }
     for(int i = 0; i < n; i ++){
         arr[i][width] = 1;
     }
@@ -273,8 +268,8 @@ void drawGodMaze(int **&arr, int n, int m){
     blankGhostHouse(arr,n,m);
     mirrorMaze(arr,n,m);
     drawRandomCherries(arr,n,m);
-    system("clear");
-    printMatrix(arr,n,m);
+    // system("clear");
+    // printMatrix(arr,n,m);
 }
 
 void drawBorders(int **&arr, int n, int m){
@@ -351,9 +346,9 @@ bool removeDeadends(int **&arr, int n, int m){
                         arr[i+1][j] = 0;
                         break;
                 }
-                usleep(50000);
-                system("clear");
-                printMatrix(arr,n,m);
+                // usleep(50000);
+                // system("clear");
+                // printMatrix(arr,n,m);
             }
         }
     }

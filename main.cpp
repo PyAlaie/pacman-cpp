@@ -8,17 +8,17 @@ using namespace std;
 int main(){
     int **map;
 
+    // printing the splash screen
     system(CLEAR);
     typeEffect("\nWelcome to Kokonut Pacman!\n", "green");
-    usleep(500000);
+    usleep(700000);
 
+    // initializing database object
     sqlite3 *db;
     initializeDB(db);
 
-    // creating status for pacman
+    // creating pacman and ghost objects
     Pacman pacman;
-    
-    //creating ghosts
     Ghost ghost1;
     Ghost ghost2;
     Ghost ghost3;
@@ -26,8 +26,10 @@ int main(){
     
     int action;
     int n, m;
+
     while(true){
     showMenu();
+
     cin >> action;
 
     vector<ranking> rr; // to get rankings
@@ -38,14 +40,15 @@ int main(){
 		case 1:
 			cout << "Pleace enter the dimensions of the game(x, y): ";
 			cin >> n >> m;
+            system(CLEAR);
 
             if(m % 2 == 0){
                 m++; // for that mirror thing ... :)
             }
 
 			// creating the matrix
-			pacman.lives = 3;
 			map = initializeMatrix(n,m);
+
 			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
 			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db);
 			break;
@@ -60,6 +63,7 @@ int main(){
 
             int a;
             cin >> a;
+            system(CLEAR);
 
             readGameData(savedGames[a], gameToLoad); 
             loadGame(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, gameToLoad);

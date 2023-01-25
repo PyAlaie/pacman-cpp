@@ -13,7 +13,7 @@ struct Pacman{
     char current_direction;
     char input_direction;
     void updatePacmanDirection(int **arr, Pacman &pacman, bool &pacmanCheck);
-    void movePacman(int **&arr, Pacman &pacman);
+    bool movePacman(int **&arr, Pacman &pacman);
 };
 
 void updatePacmanDirection(int **arr, Pacman &pacman){   
@@ -22,7 +22,7 @@ void updatePacmanDirection(int **arr, Pacman &pacman){
     }
 }
 
-void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck, int &cherryTime){   
+bool movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck, int &cherryTime){   
     switch (pacman.current_direction)
     {
     case 'w':
@@ -44,6 +44,7 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
 	        else{
 	        	pacmanCheck = 1;
 	        }
+            return true;
         }
         break;
     case 's':
@@ -65,6 +66,7 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
 	    else{
 	    	pacmanCheck = 1;
 	    }
+        return true;
         }
         break;
     case 'd':
@@ -86,6 +88,7 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
 	    else{
 	    	pacmanCheck = 1;
 	    }
+        return true;
         }
         break;
     case 'a':
@@ -107,6 +110,7 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
 	    else{
 	    	pacmanCheck = 1;
 	    }
+        return true;
         }
         break;
     }
