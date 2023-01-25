@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <map>
+#include <queue>
 
 
 using namespace std;
@@ -16,7 +17,7 @@ struct Ghost{
 	Coords coords;
 	Coords targetPoint;
 	Coords previousTragetPoint;
-	map<Coords,Coords> path;
+	vector<Coords> path;
 	int velocity;
 	char mode;  //s for scatter, c for chase and e for deadwalk
 
@@ -46,7 +47,15 @@ int getDist(Coords targetPoint, int dir, Coords ghostCoords){
 	return dist;
 }
 
+void newMove(int **&map, Ghost &ghost, Coords target){
+	map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+	if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
+		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
+		}
+	map[target.i][target.j] = -2;
+	ghost.coords = target;
 
+}
 void move(int **&map, Ghost &ghost){
 	switch (ghost.direction)
 	{
@@ -114,94 +123,151 @@ bool isNotVisited(Coords x, vector<Coords>& explored){
 	return 1;
 }
 
-void changePath(int **map, Coords targetPoint, Coords ghostCoords, std::map<Coords, Coords> &path){ 
-	// cout << "heeeeeeee" << endl;
+// void changePath(int **map, Coords targetPoint, Coords ghostCoords, std::map<Coords, Coords> &path){ 
+// 	// cout << "heeeeeeee" << endl;
 
 
-	path.clear();
+// 	path.clear();
 	
-	vector<Coords> frontier;
-	vector<Coords> explored;
+// 	vector<Coords> frontier;
+// 	vector<Coords> explored;
 
-	char directions[4] = {'w', 'd', 's', 'a'};
+// 	char directions[4] = {'w', 'd', 's', 'a'};
 
-	frontier.push_back(ghostCoords);
-	explored.push_back(ghostCoords);
+// 	frontier.push_back(ghostCoords);
+// 	explored.push_back(ghostCoords);
 
-	std::map<Coords, Coords> allPaths;
+// 	std::map<Coords, Coords> allPaths;
 
 
-	while(frontier.size() > 0){
+// 	while(frontier.size() > 0){
 
-	// cout << "oomad tooo " << endl;
-		Coords currentCell = frontier.front();
-		// cout<<"1" << endl;
-	// cout << "Target: " << targetPoint.i << "	" << targetPoint.j << endl;
-	// cout << "Current: " << currentCell.i << "	" << currentCell.j << endl;
-	// cout << endl << endl;
-		frontier.erase(frontier.begin());
-		// cout<<"2" << endl;
-		if(currentCell.i == targetPoint.i && currentCell.j == targetPoint.j){
-			break;
-		}
-		// cout<<"3" << endl;
+// 	// cout << "oomad tooo " << endl;
+// 		Coords currentCell = frontier.front();
+// 		// cout<<"1" << endl;
+// 	// cout << "Target: " << targetPoint.i << "	" << targetPoint.j << endl;
+// 	// cout << "Current: " << currentCell.i << "	" << currentCell.j << endl;
+// 	// cout << endl << endl;
+// 		frontier.erase(frontier.begin());
+// 		// cout<<"2" << endl;
+// 		if(currentCell.i == targetPoint.i && currentCell.j == targetPoint.j){
+// 			break;
+// 		}
+// 		// cout<<"3" << endl;
 
-		for(int i = 0; i < 4; i++){
-			// cout<<"4" << endl;
-			Coords childCell;
-			// cout << "5" << endl;
-			// cout << " i: " << i << endl;
-			// cout << "ddd: " << directions << endl;
-			// cout << "RRR: " << currentCell.i << "   " << currentCell.j << endl;
-			if(!isThereWall(map, currentCell, directions[i])){
+// 		for(int i = 0; i < 4; i++){
+// 			// cout<<"4" << endl;
+// 			Coords childCell;
+// 			// cout << "5" << endl;
+// 			// cout << " i: " << i << endl;
+// 			// cout << "ddd: " << directions << endl;
+// 			// cout << "RRR: " << currentCell.i << "   " << currentCell.j << endl;
+// 			if(!isThereWall(map, currentCell, directions[i])){
+// 	// cout << "BIROON " << currentCell.i << "  " << currentCell.j << endl;
+// 				if(directions[i] == 'w'){
+// 					childCell.i = currentCell.i - 1;
+// 					childCell.j = currentCell.j; 
+// 				} else if(directions[i] == 'd'){
+// 					childCell.i = currentCell.i;
+// 					childCell.j = currentCell.j + 1; 
+// 				} else if(directions[i] == 's'){
+// 					childCell.i = currentCell.i + 1;
+// 					childCell.j = currentCell.j; 
+// 				} else if(directions[i] == 'a'){
+// 					childCell.i = currentCell.i;
+// 					childCell.j = currentCell.j - 1; 
+// 				}
+
+// 				// cout << "LLL: " << childCell.i << "   " << childCell.j << endl;
+// 				// for(int i =0 ; i < explored.size(); i++){
+// 				// 		cout << "EEEEE: " << explored[i].i <<"	"<< explored[i].j << endl;
+// 				// }
+// 				// cout << endl << endl << endl;
+
+// 				if(isNotVisited(childCell, explored)){
+// 					// cout << "PUSH: " << childCell.i << "    " << childCell.j << endl;
+// 					frontier.push_back(childCell);
+// 					explored.push_back(childCell);
+// 					allPaths[childCell] = currentCell;
+// 					// cout << "HHHHHHH: " << childCell.i << "	  " << childCell.j << endl << allPaths[childCell].i << "	" << allPaths[childCell].j <<  endl << endl; 
+// 				}
+
+
+// 			}
+// 		}
+// 	}
+
+	
+
+// 	Coords cell = targetPoint;
+// 	cout << "yyy: " << targetPoint.i << " " << targetPoint.j << endl;
+// 	// printMap(allPaths);
+
+// 	while(cell.i != ghostCoords.i and cell.j != ghostCoords.j){
+// 		cout << cell.i << "    " << cell.j << endl;
+// 		usleep(1000000);
+// 		path[allPaths[cell]] = cell;
+// 		cell = allPaths[cell];
+// 	}
+// 	//usleep(1000000000);
+
+
+
+// }
+
+void findpaths(int **map, Coords src, Coords dst, vector<Coords>& path)
+{
+    path.clear();
+    char directions[4] = {'w', 'd', 's', 'a'};
+    // create a queue which stores
+    // the paths
+    queue<vector<Coords> > q;
+ 
+    // path vector to store the current path
+    // vector<Coords> path;
+    path.push_back(src);
+    q.push(path);
+    while (!q.empty()) {
+        path = q.front();
+        q.pop();
+        Coords last = path[path.size() - 1];
+ 
+        // if last vertex is the desired destination
+        // then print the path
+        if (last == dst){
+            // return path;
+            break;
+        }
+ 
+
+ 
+        // traverse to all the nodes connected to
+        // current vertex and push new path to queue
+        for (int i = 0; i < 4; i++) {
+            Coords childCell;
+            if(!isThereWall(map, last, directions[i])){
 	// cout << "BIROON " << currentCell.i << "  " << currentCell.j << endl;
 				if(directions[i] == 'w'){
-					childCell.i = currentCell.i - 1;
-					childCell.j = currentCell.j; 
+					childCell.i = last.i - 1;
+					childCell.j = last.j; 
 				} else if(directions[i] == 'd'){
-					childCell.i = currentCell.i;
-					childCell.j = currentCell.j + 1; 
+					childCell.i = last.i;
+					childCell.j = last.j + 1; 
 				} else if(directions[i] == 's'){
-					childCell.i = currentCell.i + 1;
-					childCell.j = currentCell.j; 
+					childCell.i = last.i + 1;
+					childCell.j = last.j; 
 				} else if(directions[i] == 'a'){
-					childCell.i = currentCell.i;
-					childCell.j = currentCell.j - 1; 
+					childCell.i = last.i;
+					childCell.j = last.j - 1; 
 				}
-
-				// cout << "LLL: " << childCell.i << "   " << childCell.j << endl;
-				// for(int i =0 ; i < explored.size(); i++){
-				// 		cout << "EEEEE: " << explored[i].i <<"	"<< explored[i].j << endl;
-				// }
-				// cout << endl << endl << endl;
-
-				if(isNotVisited(childCell, explored)){
-					// cout << "PUSH: " << childCell.i << "    " << childCell.j << endl;
-					frontier.push_back(childCell);
-					explored.push_back(childCell);
-					allPaths[childCell] = currentCell;
-					// cout << "HHHHHHH: " << childCell.i << "	  " << childCell.j << endl << allPaths[childCell].i << "	" << allPaths[childCell].j <<  endl << endl; 
-				}
-
-
-			}
-		}
-	}
-
-	Coords cell = targetPoint;
-	cout << "yyy: " << targetPoint.i << " " << targetPoint.j << endl;
-	// printMap(allPaths);
-
-	while(cell.i != ghostCoords.i and cell.j != ghostCoords.j){
-		cout << cell.i << "    " << cell.j << endl;
-		usleep(1000000);
-		path[allPaths[cell]] = cell;
-		cell = allPaths[cell];
-	}
-	//usleep(1000000000);
-
-
-
+            if (isNotVisited(childCell, path)) {
+                vector<Coords> newpath(path);
+                newpath.push_back(childCell);
+                q.push(newpath);
+            }
+        }
+    }
+}
 }
 
 
@@ -213,6 +279,26 @@ Coords chooseTargetPoint(Ghost ghost, int ghostNumber, Coords pacman, int n, int
 	int yDist = abs(blinky.j - pinkyTargetPoint.j);
 	
 	Coords newTargetPoint = ghost.targetPoint;
+	if(ghost.mode == 's'){
+		switch(ghostNumber){
+			case 1:
+				newTargetPoint.i = n - 1;
+				newTargetPoint.j = m - 1;
+				break;
+			case 2:
+				newTargetPoint.i = n - 2;
+				newTargetPoint.j = m - 2;
+				break;
+			case 3:
+				newTargetPoint.i = n - 2;
+				newTargetPoint.j = m - 2;
+				break;
+			case 4:
+				newTargetPoint.i = n - 2;
+				newTargetPoint.j = m - 2;
+				break;
+		}
+	}
 	// ghost.mode = 'c';
 	// if(ghost.mode == 's'){
 	// 	switch (ghostNumber)
@@ -280,59 +366,61 @@ Coords chooseTargetPoint(Ghost ghost, int ghostNumber, Coords pacman, int n, int
 	// 	}
 	// }
 
-	// else if(ghost.mode == 'c'){
-		switch (ghostNumber)
-		{
-		case 1:
-			newTargetPoint.i = pacman.i;
-			newTargetPoint.j = pacman.j;
-			break;
-		case 2:
-			if(pacmanDir == 'w'){
-				newTargetPoint.i = pacman.i + 2;
-				newTargetPoint.j = pacman.j + 2;
-			}	else if(pacmanDir == 'd'){
-				newTargetPoint.i = pacman.i;
-				newTargetPoint.j = pacman.j + 2;
-			} else if(pacmanDir == 's'){
-				newTargetPoint.i = pacman.i;
-				newTargetPoint.j = pacman.j - 2;
-			} else if(pacmanDir == 'a'){
-				newTargetPoint.i = pacman.i - 2;
-				newTargetPoint.j = pacman.j;
-			}
-			break;
-		case 3:
-			if(blinky.i > pinkyTargetPoint.i){		//flip bliky.i respect to pinkyTragetpoin.i in 180 degree
-				newTargetPoint.i = pinkyTargetPoint.i - xDist;
-			} else{
-				newTargetPoint.i = pinkyTargetPoint.i + xDist;
-			}
+	//  else if(ghost.mode == 'c'){
+		newTargetPoint.i = pacman.i;
+		newTargetPoint.j = pacman.j;
+		// switch (ghostNumber)
+		// {
+		// case 1:
+		// 	newTargetPoint.i = pacman.i;
+		// 	newTargetPoint.j = pacman.j;
+		// 	break;
+		// case 2:
+		// 	if(pacmanDir == 'w'){
+		// 		newTargetPoint.i = pacman.i + 2;
+		// 		newTargetPoint.j = pacman.j + 2;
+		// 	}	else if(pacmanDir == 'd'){
+		// 		newTargetPoint.i = pacman.i;
+		// 		newTargetPoint.j = pacman.j + 2;
+		// 	} else if(pacmanDir == 's'){
+		// 		newTargetPoint.i = pacman.i;
+		// 		newTargetPoint.j = pacman.j - 2;
+		// 	} else if(pacmanDir == 'a'){
+		// 		newTargetPoint.i = pacman.i - 2;
+		// 		newTargetPoint.j = pacman.j;
+		// 	}
+		// 	break;
+		// case 3:
+		// 	if(blinky.i > pinkyTargetPoint.i){		//flip bliky.i respect to pinkyTragetpoin.i in 180 degree
+		// 		newTargetPoint.i = pinkyTargetPoint.i - xDist;
+		// 	} else{
+		// 		newTargetPoint.i = pinkyTargetPoint.i + xDist;
+		// 	}
 
-			if(blinky.j > pinkyTargetPoint.j){ //flip bliky.i respect to pinkyTragetpoin.j in 180 degree
-				newTargetPoint.j = pinkyTargetPoint.j - yDist;
-			} else{
-				newTargetPoint.j = pinkyTargetPoint.j + yDist;
-			}
-			break;
+		// 	if(blinky.j > pinkyTargetPoint.j){ //flip bliky.i respect to pinkyTragetpoin.j in 180 degree
+		// 		newTargetPoint.j = pinkyTargetPoint.j - yDist;
+		// 	} else{
+		// 		newTargetPoint.j = pinkyTargetPoint.j + yDist;
+		// 	}
+		// 	break;
 		
 
-		case 4:
-			if(getDist(pacman, ghost.direction, ghost.coords) <= 8){
-				newTargetPoint.i = pacman.i;
-				newTargetPoint.j = pacman.j;
-			} else if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
-				getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){  //switch to scatter mode movement
-					int random = rand();
-					newTargetPoint.i = random % (n-1);
-					newTargetPoint.j = random % (m-1);
-			} else if(!(ghost.targetPoint.i == n - 1 && ghost.targetPoint.j == 1) &&
-						getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
-						newTargetPoint.i = n - 2;
-						newTargetPoint.j = 1;
-					}
-			break;
-		}
+		// case 4:
+		// 	if(getDist(pacman, ghost.direction, ghost.coords) <= 8){
+		// 		newTargetPoint.i = pacman.i;
+		// 		newTargetPoint.j = pacman.j;
+		// 	} else if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
+		// 		getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){  //switch to scatter mode movement
+		// 			int random = rand();
+		// 			newTargetPoint.i = random % (n-1);
+		// 			newTargetPoint.j = random % (m-1);
+		// 	} else if(!(ghost.targetPoint.i == n - 1 && ghost.targetPoint.j == 1) &&
+		// 				getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
+		// 				newTargetPoint.i = n - 2;
+		// 				newTargetPoint.j = 1;
+		// 			}
+		// 	break;
+		// }
 	// }
 
 	return newTargetPoint;

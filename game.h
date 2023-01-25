@@ -109,11 +109,11 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
 
    setTime(scatterTime, chaseTime, 1);
 
-   ghost1.targetPoint. i = n - 2;
-   ghost1.targetPoint.j = m - 2;
+   ghost1.targetPoint. i = n - 1;
+   ghost1.targetPoint.j = m - 1;
 
    ghost1.targetPoint = chooseTargetPoint(ghost1,1,pacman.coords,n,m,pacman.current_direction,ghost1.coords,ghost2.coords);
-   changePath(map, ghost1.targetPoint, ghost1.coords, ghost1.path);
+//    changePath(map, ghost1.targetPoint, ghost1.coords, ghost1.path);
    cout << "ghost111: " << ghost1.targetPoint.i << "        " << ghost1.targetPoint.j << endl;
 
    ghost2.targetPoint. i = 2;
@@ -134,7 +134,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 
     int scatterTimeCalculator = 0;
     int chaseTimeCalculator = 0;
-    int cherryTimeCalculator = 0;
+
     bool flagCherry = 0;
 
     printMatrix(map,n,m,pacmanCheck,pacman.lives,timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, 's');
@@ -282,14 +282,19 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 
         // ghost1.direction = chooseDirection(map, ghost1.targetPoint, ghost1.coords, ghost1.direction);
         // ghost2.direction = chooseDirection(map, ghost2.targetPoint, ghost2.coords, ghost2.direction);
+        // Coords temp = chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.coords);
+        // if(!(temp == ghost1.targetPoint)){
+        //     ghost1.targetPoint = temp;
+        // }
 
-        Coords temp = chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.coords);
-        if(ghost1.targetPoint.i != temp.i && ghost1.targetPoint.j != temp.j){
-            ghost1.targetPoint = temp;
-            changePath(map, ghost1.targetPoint, ghost1.coords, ghost1.path);
-        }
-        ghost1.direction = findDirection(ghost1.coords, ghost1.path[ghost1.coords]);
-        move(map, ghost1);
+        ghost1.targetPoint = pacman.coords;
+        findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
+    
+        ghost1.path.erase(ghost1.path.begin());
+        newMove(map, ghost1, ghost1.path.front());
+
+        // ghost1.direction = findDirection(ghost1.coords, ghost1.path.front());
+        // move(map, ghost1);
 
         // updateGhostDirection(map, ghost1);
         // move(map, ghost1);
