@@ -18,7 +18,7 @@ using namespace std;
 void showMenu();
 void setPlay(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int);
 void Play(int**, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int, int, sqlite3 *&db);
-void printMatrix(int **, int, int, bool&, int, long long int, Coords, Coords, Coords, Coords, char);
+void printMatrix(int **, int, int, bool&, int, long long int, Coords, Coords, Coords, Coords, char, Pacman);
 char getInput(char);
 void coloredCout(string text, string color);
 void clearGhost(int **&, Coords, int, int);
@@ -26,6 +26,8 @@ void clearPacman(int **&, Coords);
 void saveGame(int **&);
 int ** initializeMatrix(int, int);
 void loadGame(int**&, Pacman&, Ghost&, Ghost&, Ghost&, Ghost&, int&, int&, mapData);
+void typeEffect(string text, string color);
+void printPacman(Pacman pacman);
 
 int dotCounter = 0;
 int ghostCounter = 0;       //countds the number of ghosts that had been eaten
@@ -38,8 +40,7 @@ int chaseTime = 0;
 
 void showMenu(){
     system(CLEAR);
-    coloredCout("\nWelcome to Pacman's Coconut version, Please choose from the list below\n\n", "green");
-    coloredCout("1. New Game\n", "blue");
+    coloredCout("\n1. New Game\n", "blue");
     coloredCout("2. Load Game\n", "blue");
     coloredCout("3. Ranking\n", "blue");
     coloredCout("4. Exit\n\n", "blue");
@@ -137,7 +138,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     int cherryTimeCalculator = 0;
     bool flagCherry = 0;
 
-    printMatrix(map,n,m,pacmanCheck,pacman.lives,timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, 's');
+    printMatrix(map,n,m,pacmanCheck,pacman.lives,timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, 's',pacman);
     std::cout << "Enter k to start\n";
     char input = 't';
     while(true){
@@ -182,7 +183,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
                     coloredCout("Invalid name", "red");
                     std::cin >> name;
                 }
-                saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4);
+                saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4, cherryCheck, cherryTime);
                 break;
             } else if(input == 'c'){
                 break;
@@ -209,7 +210,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
             flagCherry = 1;
             cherryTime--;
         }
-		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, ghost1.mode);
+		printMatrix(map,n,m,pacmanCheck,pacman.lives, timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, ghost1.mode,pacman);
         bool ghost1Check = ghostCheck(pacman.coords, ghost1.coords);
         bool ghost2Check = ghostCheck(pacman.coords, ghost2.coords);
         bool ghost3Check = ghostCheck(pacman.coords, ghost3.coords);
@@ -346,7 +347,7 @@ char getInput(char current_dir){
 }
 
 void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long long int timer, 
-                Coords ghost1, Coords ghost2, Coords ghost3, Coords ghost4, char ghostMode){   
+                Coords ghost1, Coords ghost2, Coords ghost3, Coords ghost4, char ghostMode, Pacman pacman){   
 	dotCounter = 0;				//if there is no dot in the map, you are the winner!	
 	bool flag = 1;				//checks if there is pacman in map
     for(int i = 0; i < n; i++){
@@ -360,12 +361,13 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
                 break;
             case 1:
                 // wall
-                std::cout<<"#";
+                // cout<<"#";
+                cout<<"\u2588";
                 break;
             case 2:
                 // pacman
                 if(!pacmanCheck){
-                	std::cout<<"*";
+                	printPacman(pacman);
                 }
                 flag = 0;
                 break;
@@ -387,26 +389,28 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
             	//std::cout << "@";
             	break;
             case 3:
-                cout << "c";
+                // cout << "c";
+                coloredCout("o", "red");
                 break;
             }
         }
         if(i == 0){
-        	std::cout << "			TIME: " << timer << endl;
+            cout << "\t\tTIME: ";
+            coloredCout(to_string(timer), "yellow"); 
         }
         else if(i == 1){
-        	std::cout << "			LIVES: " << lives << endl;
-        }
-        else if(i == 2){
-        	std::cout << "			Whenever wnated to stop or save the game enter p" << endl;
+            cout << "\t\tLIVES: ";
+            for(int i = 0; i < lives; i++){
+                coloredCout("\u2665", "red");
+            }
         }
         else if(i == 3){
             std::cout << "          mode: " << ghostMode << endl;
-        }
-        else{
-	        std::cout<<endl;
-	    }
+        }    
+	    std::cout<<endl;
     }
+    
+    
     
     if(flag || !dotCounter)
     	pacmanCheck = 1;
@@ -421,6 +425,7 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
 #define YELLOW_TXT "33"
 #define RESET "\033[m"
 #define BLUE_TXT "36"
+#define PURPLE_TXT "35"
 
 void coloredCout(string text, string color){
     if(color == "green"){
@@ -434,6 +439,9 @@ void coloredCout(string text, string color){
     }
     else if(color == "blue"){
         std::cout << ESC << ";" << BLUE_TXT <<"m"<< text << RESET;
+    }
+    else if(color == "purple"){
+        cout << ESC << ";" << PURPLE_TXT <<"m"<< text << RESET;
     }
 }
 void clearGhost(int **&map, Coords ghostCoords, int previousStatus, int n){
@@ -473,6 +481,9 @@ void loadGame(int **&map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &g
     pacman.current_direction = gameToLoad.pacman.current_direction;
     pacman.input_direction = gameToLoad.pacman.input_direction;
     pacman.lives = gameToLoad.pacman.lives;
+
+    cherryCheck = gameToLoad.cherryEaten;
+    cherryTime = gameToLoad.cherryExpire;
     
     
     // adding ghosts to some place
@@ -513,6 +524,62 @@ void loadGame(int **&map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &g
     ghost2.previousStatus = gameToLoad.g2.previousStatus;
     ghost3.previousStatus = gameToLoad.g3.previousStatus;
     ghost4.previousStatus = gameToLoad.g4.previousStatus;
+}
+
+void typeEffect(string text, string color){
+    int delayTime = 50000;
+    if(color == "green"){
+        cout << ESC << ";" << GREEN_TXT <<"m";
+        for(int i = 0; i < text.size(); i++){
+            cout<<text[i]<<flush;
+            usleep(delayTime);
+        }
+        cout << RESET;
+    }
+    else if(color == "red"){
+        cout << ESC << ";" << GREEN_TXT <<"m";
+        for(int i = 0; i < text.size(); i++){
+            cout<<text[i]<<flush;
+            usleep(delayTime);
+        }
+        cout << RESET;
+    }
+    else if(color == "yellow"){
+        cout << ESC << ";" << GREEN_TXT <<"m";
+        for(int i = 0; i < text.size(); i++){
+            cout<<text[i]<<flush;
+            usleep(delayTime);
+        }
+        cout << RESET;        
+    }
+    else if(color == "blue"){
+        cout << ESC << ";" << GREEN_TXT <<"m";
+        for(int i = 0; i < text.size(); i++){
+            cout<<text[i]<<flush;
+            usleep(delayTime);
+        }
+        cout << RESET;
+    }
+}
+
+void printPacman(Pacman pacman){
+    string color = "blue";
+    if(pacman.current_direction == 'w'){
+        coloredCout("V", color);
+        // cout<<'V';
+    }
+    else if(pacman.current_direction == 's'){
+        coloredCout("\u028C", color);
+        // cout<<"\u028C";
+    }
+    else if(pacman.current_direction == 'd'){
+        coloredCout("<", color);
+        // cout<<'<';
+    }
+    else if(pacman.current_direction == 'a'){
+        coloredCout(">", color);
+        // cout<<'>';
+    }
 }
 
 #endif

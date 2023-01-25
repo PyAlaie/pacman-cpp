@@ -8,6 +8,9 @@ using namespace std;
 int main(){
     int **map;
 
+    system(CLEAR);
+    typeEffect("\nWelcome to Kokonut Pacman!\n", "green");
+    usleep(500000);
 
     sqlite3 *db;
     initializeDB(db);
@@ -20,7 +23,6 @@ int main(){
     Ghost ghost2;
     Ghost ghost3;
     Ghost ghost4;
-    
     
     int action;
     int n, m;
@@ -36,6 +38,10 @@ int main(){
 		case 1:
 			cout << "Pleace enter the dimensions of the game(x, y): ";
 			cin >> n >> m;
+
+            if(m % 2 == 0){
+                m++; // for that mirror thing ... :)
+            }
 
 			// creating the matrix
 			pacman.lives = 3;
@@ -63,12 +69,20 @@ int main(){
 		case 3:
             rr = getTopScores(db,10);
             for(int i = 0; i< rr.size(); i++){
-                cout<<rr[i].username<<" "<<rr[i].score<<endl;
+                cout<<i+1<<". ";
+                coloredCout(rr[i].username, "yellow");
+                cout<<"\t\t";
+                coloredCout(to_string(rr[i].score), "green");
+                cout<<endl;
             }
-           
+
+            char b;
+            cin>>b;
             break;
 		case 4:
 			return 0;
+            break;
+        default:
             break;
 	}
     }
