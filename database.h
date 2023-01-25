@@ -80,6 +80,7 @@ vector<ranking> getTopScores(sqlite3 *db, int count){
     // returns a vector of ranking structs of top {count} scores from database
     string q = "SELECT * FROM RANKING ORDER BY score DESC LIMIT " + to_string(count);
     char* messaggeError;
+    res.clear();
     int exit = sqlite3_exec(db, q.c_str(), callback, 0, &messaggeError);
     return res;
 }

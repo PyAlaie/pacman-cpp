@@ -39,6 +39,10 @@ int main(){
 			cout << "Pleace enter the dimensions of the game(x, y): ";
 			cin >> n >> m;
 
+            if(m % 2 == 0){
+                m++; // for that mirror thing ... :)
+            }
+
 			// creating the matrix
 			pacman.lives = 3;
 			map = initializeMatrix(n,m);
@@ -65,7 +69,11 @@ int main(){
 		case 3:
             rr = getTopScores(db,10);
             for(int i = 0; i< rr.size(); i++){
-                cout<<rr[i].username<<" "<<rr[i].score<<endl;
+                cout<<i+1<<". ";
+                coloredCout(rr[i].username, "yellow");
+                cout<<"\t\t";
+                coloredCout(to_string(rr[i].score), "green");
+                cout<<endl;
             }
 
             char b;
