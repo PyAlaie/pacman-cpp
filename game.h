@@ -137,6 +137,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
     int chaseTimeCalculator = 0;
     int cherryTimeCalculator = 0;
     bool flagCherry = 0;
+    bool isGameSaved = false;
 
     printMatrix(map,n,m,pacmanCheck,pacman.lives,timer, ghost1.coords, ghost2.coords, ghost3.coords, ghost4.coords, 's',pacman);
     std::cout << "Enter k to start\n";
@@ -147,20 +148,24 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
        		break;
     }
     while(pacman.lives != 0){
-    	//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+        if(timer % 4 == 0){
+    	    // moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
+            updateGhostDirection(map, ghost1);
+            move(map, ghost1);
+        }
 
 
-    	if(counter >= 50){
+    	if(counter >= 50 && timer % 4 == 0){
             updateGhostDirection(map, ghost2);
             move(map, ghost2);
     		// moveGhost(map, ghost2, ghost2.previousStatus, pacmanCheck);
     	}
-    	if(counter >= 10){
+    	if(counter >= 10 && timer % 4 == 0){
             updateGhostDirection(map, ghost3);
             move(map, ghost3);
     		// moveGhost(map, ghost3, ghost3.previousStatus, pacmanCheck);
     	}
-    	if(counter >= 150){
+    	if(counter >= 150 && timer % 4 == 0){
             updateGhostDirection(map, ghost4);
             move(map, ghost4);
     		// moveGhost(map, ghost4, ghost4.previousStatus, pacmanCheck);
@@ -184,13 +189,11 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
                     std::cin >> name;
                 }
                 saveGameRecord(name, map, n,m,pacman,ghost1,ghost2,ghost3,ghost4, cherryCheck, cherryTime);
+                isGameSaved = true;
                 break;
             } else if(input == 'c'){
-                break;
-            }
-            else if (input == 'c')
-            {
                 pacman.input_direction = pacman.current_direction;
+                continue;
             }
             else if (input == 'e')
             {
@@ -198,8 +201,10 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
             }
         }
         else{
-		updatePacmanDirection(map,pacman);
-		movePacman(map,pacman,pacmanCheck, cherryCheck, cherryTime);
+        if(timer % 3 == 0){
+		    updatePacmanDirection(map,pacman);
+		    movePacman(map,pacman,pacmanCheck, cherryCheck, cherryTime);
+        }
 		system(CLEAR);
         
         
@@ -231,18 +236,22 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         else if(cherryCheck){ 
             ghostCounter++;
             if(ghost1Check){
+                clearGhost(map, ghost1.coords, ghost1.previousStatus, n);
                 ghost1.coords.i = n/4 + 1;
                 ghost1.coords.j = m/2;
             }
             if(ghost2Check){
+                clearGhost(map, ghost2.coords, ghost2.previousStatus, n);
                 ghost2.coords.i = n/4 + 1;
                 ghost2.coords.j = m/2;
             }
             if(ghost3Check){
+                clearGhost(map, ghost3.coords, ghost3.previousStatus, n);
                 ghost3.coords.i = n/4 + 1;
                 ghost3.coords.j = m/2;
             }
             if(ghost4Check){
+                clearGhost(map, ghost4.coords, ghost4.previousStatus, n);
                 ghost4.coords.i = n/4 + 1;
                 ghost4.coords.j = m/2;
             }
@@ -250,29 +259,29 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 		
 
 
-        if(scatterTime != scatterTimeCalculator && ghost1.mode == 's'){
-            scatterTimeCalculator++;
-            chaseTimeCalculator = 0;
-        }
-        else{
-            scatterTimeCalculator = 0;
-            ghost1.mode = 'c';
-            ghost2.mode = 'c';
-            ghost3.mode = 'c';
-            ghost4.mode = 'c';
-        }
+        // if(scatterTime != scatterTimeCalculator && ghost1.mode == 's'){
+        //     scatterTimeCalculator++;
+        //     chaseTimeCalculator = 0;
+        // }
+        // else{
+        //     scatterTimeCalculator = 0;
+        //     ghost1.mode = 'c';
+        //     ghost2.mode = 'c';
+        //     ghost3.mode = 'c';
+        //     ghost4.mode = 'c';
+        // }
 
-        if(chaseTime != chaseTimeCalculator && ghost1.mode == 'c'){
-            chaseTimeCalculator++;
-            scatterTimeCalculator = 0;
-        }
-        else{
-            chaseTimeCalculator = 0;
-            ghost1.mode = 's';
-            ghost2.mode = 's';
-            ghost3.mode = 's';
-            ghost4.mode = 's';
-        }
+        // if(chaseTime != chaseTimeCalculator && ghost1.mode == 'c'){
+        //     chaseTimeCalculator++;
+        //     scatterTimeCalculator = 0;
+        // }
+        // else{
+        //     chaseTimeCalculator = 0;
+        //     ghost1.mode = 's';
+        //     ghost2.mode = 's';
+        //     ghost3.mode = 's';
+        //     ghost4.mode = 's';
+        // }
 
         // if(abs(ghost1.targetPoint.i - ghost1.coords.i) < 2 && abs(ghost1.targetPoint.j - ghost1.coords.j) < 2){
         //     chooseTargetPoint(ghost1, 1, pacman.coords, n, m, pacman.current_direction, ghost1.coords, ghost2.targetPoint);
@@ -284,17 +293,19 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         // ghost1.direction = chooseDirection(map, ghost1.targetPoint, ghost1.coords, ghost1.direction);
         // ghost2.direction = chooseDirection(map, ghost2.targetPoint, ghost2.coords, ghost2.direction);
 
-        updateGhostDirection(map, ghost1);
-        move(map, ghost1);
+        // if(timer % 4 == 0){
+        //     updateGhostDirection(map, ghost1);
+        //     move(map, ghost1);
 
-        updateGhostDirection(map, ghost2);
-        move(map, ghost2);
+        //     updateGhostDirection(map, ghost2);
+        //     move(map, ghost2);
 
-        updateGhostDirection(map, ghost3);
-        move(map, ghost3);
+        //     updateGhostDirection(map, ghost3);
+        //     move(map, ghost3);
 
-        updateGhostDirection(map, ghost4);
-        move(map, ghost4);
+        //     updateGhostDirection(map, ghost4);
+        //     move(map, ghost4);
+        // }
 		//moveGhost(map, ghost1, ghost1.previousStatus, pacmanCheck);
 		
         
@@ -310,13 +321,14 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
 		timer++;
         }
     }
-    
-    int score = calScore(dotCounter, ghostCounter, cherryCounter);
-    cout << "Game Over!\nYour score is " << score<<endl;
-    string username;
-    coloredCout("Enter Name: ", "blue");
-    std::cin >> username;
-    saveRankingRecord(db, username, score, timer);
+    if(!isGameSaved){
+        int score = calScore(dotCounter, ghostCounter, cherryCounter);
+        cout << "Game Over!\nYour score is " << score<<endl;
+        string username;
+        coloredCout("Enter Name: ", "blue");
+        std::cin >> username;
+        saveRankingRecord(db, username, score, timer);
+    }
     return;
 }
 
@@ -377,15 +389,15 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
                 break;
             case -2:
                 if(cherryCheck)
-                    cout << "@";
+                    cout << "&";
             	else if(i == ghost1.i && j == ghost1.j)
-                    coloredCout("@", "red");
+                    coloredCout("&", "red");
                 else if(i == ghost2.i && j == ghost2.j)
-                    coloredCout("@", "green");
+                    coloredCout("&", "green");
                 else if(i == ghost3.i && j == ghost3.j)
-                    coloredCout("@", "blue");
+                    coloredCout("&", "blue");
                 else if(i == ghost4.i && j == ghost4.j)
-                    coloredCout("@", "yellow");
+                    coloredCout("&", "yellow");
             	//std::cout << "@";
             	break;
             case 3:
@@ -396,7 +408,7 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
         }
         if(i == 0){
             cout << "\t\tTIME: ";
-            coloredCout(to_string(timer), "yellow"); 
+            coloredCout(to_string(timer/10), "yellow"); 
         }
         else if(i == 1){
             cout << "\t\tLIVES: ";
@@ -404,9 +416,9 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
                 coloredCout("\u2665", "red");
             }
         }
-        else if(i == 3){
-            std::cout << "          mode: " << ghostMode << endl;
-        }    
+        // else if(i == 3){
+        //     std::cout << "\t\tmode: " << ghostMode;
+        // }    
 	    std::cout<<endl;
     }
     

@@ -29,7 +29,7 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
         if(!isThereWall(arr, pacman.coords, 'w')){
             if(isThereCherry(arr, pacman.coords, 'w')){
                 cherryCheck = 1;
-                cherryTime = 500;
+                cherryTime = 50;
             }
             if(arr[pacman.coords.i][pacman.coords.j] != -2){
                 arr[pacman.coords.i][pacman.coords.j] = -1;
@@ -48,9 +48,9 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
         break;
     case 's':
         if(!isThereWall(arr, pacman.coords, 's')){
-            if(isThereCherry(arr, pacman.coords, 'w')){
+            if(isThereCherry(arr, pacman.coords, 's')){
                 cherryCheck = 1;
-                cherryTime = 500;
+                cherryTime = 50;
             }
             if(arr[pacman.coords.i][pacman.coords.j] != -2){
                 arr[pacman.coords.i][pacman.coords.j] = -1;
@@ -68,9 +68,9 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
         }
         break;
     case 'd':
-        if(isThereCherry(arr, pacman.coords, 'w')){
+        if(isThereCherry(arr, pacman.coords, 'd')){
                     cherryCheck = 1;
-                    cherryTime = 500;
+                    cherryTime = 50;
                 }
         if(!isThereWall(arr, pacman.coords, 'd')){
             if(arr[pacman.coords.i][pacman.coords.j] != -2){
@@ -90,9 +90,9 @@ void movePacman(int **&arr, Pacman &pacman, bool &pacmanCheck, bool &cherryCheck
         break;
     case 'a':
         if(!isThereWall(arr, pacman.coords, 'a')){
-            if(isThereCherry(arr, pacman.coords, 'w')){
+            if(isThereCherry(arr, pacman.coords, 'a')){
                 cherryCheck = 1;
-                cherryTime = 500;
+                cherryTime = 50;
             }
             if(arr[pacman.coords.i][pacman.coords.j] != -2){
                 arr[pacman.coords.i][pacman.coords.j] = -1;

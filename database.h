@@ -66,13 +66,11 @@ int createTableRankingIfNotExist(sqlite3 *&db){
 }
 
 vector<ranking> res = {}; 
-int counter = 0;
 int callback(void *NotUsed, int argc, char **argv, char **azColName){
     ranking r;
     r.username = argv[0];
     r.score = stoi(argv[1]);
     res.push_back(r);
-    counter++;
     return 0;
 }
   

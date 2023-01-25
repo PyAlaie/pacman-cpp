@@ -9,27 +9,27 @@
 
 using namespace std;
 
-void drawBorders(int **&arr, int n, int m);
+int ** initializeMatrix(int, int);
 void drawGodMaze(int **&arr, int n, int m);
-void updateStartingPositions(int **&arr, int n, int m, int margin, vector<Coords> &startingPoints);
-bool checkNxNIsEmplty(int **arr, int i, int j, int n);
-void drawNxNWall(int **&arr, int i, int j, int n);
-Coords chooseRandomStartingPoint(vector<Coords> startingPoints);
-void printMatrix(int **arr, int n, int m);
 void drawBorders(int **&arr, int n, int m);
-void expandWall(int **&arr, int n, int m, Coords point);
-bool removeDeadends(int **&arr, int n, int m);
-vector<char> deadends(int **arr, int i, int j);
-void expandPoint(int **&arr, int n, int m, Coords point);
-void mirrorMaze(int **&map, int n, int m);
-bool isASingleDot(int **arr, int n, int m, int i, int j);
-bool canExpandToRight(int **arr, int n, int m, int i, int j);
-bool canExpandToDown(int **arr, int n, int m, int i, int j);
 void drawGhostHouse(int **&arr, int n, int m);
 void drawTempLine(int **&arr, int n, int m);
-int ** initializeMatrix(int, int);
-void drawRandomCherries(int **&arr, int n, int m);
+void updateStartingPositions(int **&arr, int n, int m, int margin, vector<Coords> &startingPoints);
+Coords chooseRandomStartingPoint(vector<Coords> startingPoints);
+void drawNxNWall(int **&arr, int i, int j, int n);
+void expandWall(int **&arr, int n, int m, Coords point);
+bool checkNxNIsEmplty(int **arr, int i, int j, int n);
+void expandPoint(int **&arr, int n, int m, Coords point);
+void printMatrix(int **arr, int n, int m);
+void mirrorMaze(int **&map, int n, int m);
+bool canExpandToRight(int **arr, int n, int m, int i, int j);
+bool canExpandToDown(int **arr, int n, int m, int i, int j);
 void updateCherryPossiblePoints(int **arr, int n, int m, vector<Coords> &points);
+void drawRandomCherries(int **&arr, int n, int m);
+
+bool removeDeadends(int **&arr, int n, int m);
+vector<char> deadends(int **arr, int i, int j);
+bool isASingleDot(int **arr, int n, int m, int i, int j);
 
 void updateCherryPossiblePoints(int **arr, int n, int m, vector<Coords> &points){
     for(int i = 0; i < n; i++){
@@ -146,7 +146,7 @@ void expandWall(int **&arr, int n, int m, Coords point){
     int margin = 2;
 
     if(topLeft.j - margin >= 0){
-        for(int di = 0; di < 3; di++){
+        for(int di = 0; di < 4; di++){
             if(arr[topLeft.i+di][topLeft.j-margin] == 1 && arr[topLeft.i+di][topLeft.j-1] == 0){
                 leftWall = true;
                 break;
@@ -155,7 +155,7 @@ void expandWall(int **&arr, int n, int m, Coords point){
     }
 
     if(topRight.j + margin < m){
-        for(int di = 0; di < 3; di++){
+        for(int di = 0; di < 4; di++){
             if(arr[topRight.i+di][topRight.j+margin] == 1 && arr[topRight.i+di][topRight.j+1] == 0){
                 rightWall = true;
                 break;
@@ -164,7 +164,7 @@ void expandWall(int **&arr, int n, int m, Coords point){
     }
 
     if(topLeft.i - margin >= 0){
-        for(int dj = 0; dj < 3; dj++){
+        for(int dj = 0; dj < 4; dj++){
             if(arr[topLeft.i-margin][topLeft.j+dj] == 1 && arr[topLeft.i-1][topLeft.j+dj] == 0){
                 upperWall = true;
                 break;
@@ -173,7 +173,7 @@ void expandWall(int **&arr, int n, int m, Coords point){
     }
 
     if(bottomLeft.i + margin < n){    
-        for(int dj = 0; dj < 3; dj++){
+        for(int dj = 0; dj < 4; dj++){
             if(arr[bottomLeft.i+margin][bottomLeft.j+dj] == 1 && arr[bottomLeft.i+1][bottomLeft.j+dj] == 0){
                 downWall = true;
                 break;
@@ -258,14 +258,14 @@ void drawGodMaze(int **&arr, int n, int m){
                 copy(arr, arr+n, arr);
                 // system("clear");
                 // printMatrix(arr,n,m);
-                // usleep(100000);
+                // usleep(600000);
                 Coords newPoint;
                 newPoint.i = start.i +1;
                 newPoint.j = start.j +1;
                 expandPoint(arr,n,m,newPoint);
                 // system("clear");
                 // printMatrix(arr,n,m);
-                // usleep(100000);
+                // usleep(600000);
             }
         }
     }
@@ -273,8 +273,8 @@ void drawGodMaze(int **&arr, int n, int m){
     blankGhostHouse(arr,n,m);
     mirrorMaze(arr,n,m);
     drawRandomCherries(arr,n,m);
-    // system("clear");
-    // printMatrix(arr,n,m);
+    system("clear");
+    printMatrix(arr,n,m);
 }
 
 void drawBorders(int **&arr, int n, int m){
