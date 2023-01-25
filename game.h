@@ -152,25 +152,59 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         }
 
         // setting ghost speed (which is 3 dots per sec)
-        if(timer % 4 == 0){
-            updateGhostDirection(map, ghost1);
-            move(map, ghost1);
+        if(cherryCheck){
+            if(timer % 4 == 0){
+                updateGhostDirection(map, ghost1);
+                move(map, ghost1);
+            }
+
+            if(counter >= 50 && timer % 4 == 0){
+                updateGhostDirection(map, ghost2);
+                move(map, ghost2);
+            }
+
+            if(counter >= 10 && timer % 4 == 0){
+                updateGhostDirection(map, ghost3);
+                move(map, ghost3);
+            }
+
+            if(counter >= 150 && timer % 4 == 0){
+                updateGhostDirection(map, ghost4);
+                move(map, ghost4);
+            }
         }
+        else{
+            if(timer % 6 == 0){
+                ghost1.targetPoint = pacman.coords;
+                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
 
-    	if(counter >= 50 && timer % 4 == 0){
-            updateGhostDirection(map, ghost2);
-            move(map, ghost2);
-    	}
+                ghost1.path.erase(ghost1.path.begin());
+                newMove(map,ghost1, ghost1.path.front());
+            }
 
-    	if(counter >= 10 && timer % 4 == 0){
-            updateGhostDirection(map, ghost3);
-            move(map, ghost3);
-    	}
+            if(counter >= 50 && timer % 6 == 0){
+                ghost1.targetPoint = pacman.coords;
+                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
 
-    	if(counter >= 150 && timer % 4 == 0){
-            updateGhostDirection(map, ghost4);
-            move(map, ghost4);
-    	}
+                ghost1.path.erase(ghost1.path.begin());
+                newMove(map,ghost1, ghost1.path.front());
+            }
+
+            if(counter >= 10 && timer % 6 == 0){
+                ghost1.targetPoint = pacman.coords;
+                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
+                ghost1.path.erase(ghost1.path.begin());
+                newMove(map,ghost1, ghost1.path.front());
+            }
+
+            if(counter >= 150 && timer % 6 == 0){
+                ghost1.targetPoint = pacman.coords;
+                findpaths(map, ghost1.coords, ghost1.targetPoint, ghost1.path);
+
+                ghost1.path.erase(ghost1.path.begin());
+                newMove(map,ghost1, ghost1.path.front());
+            }
+        }
     	
         // getting input
        	pacman.input_direction = getInput(pacman.input_direction);
@@ -203,7 +237,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
         }
         else{
             // setting the pacman speed (which is 4 dots per sec)
-            if(timer % 3 == 0){
+            if(timer % 2 == 0){
 		        updatePacmanDirection(map,pacman);
 
 		        bool ifDotIsEaten = movePacman(map,pacman,pacmanCheck, cherryCheck, cherryTime);

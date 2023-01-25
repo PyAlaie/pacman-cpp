@@ -6,6 +6,9 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#include <algorithm>
+#include <map>
+#include <queue>
 
 using namespace std;
 
@@ -16,7 +19,7 @@ struct Ghost{
 	int velocity;
 	char direction;
 	int previousStatus;
-	vector<char> path;
+	vector<Coords> path;
 };
 
 void setDir(vector<bool> &dirStatus){
@@ -230,127 +233,237 @@ char chooseDirection(int **map, Coords targetPoint, Coords ghostCoords, char cur
 	return currentDir;*/
 }
 
+bool isNotVisited(Coords x, vector<Coords>& explored){
+	for(int i = 0; i < explored.size(); i++){
+		// cout << "POINT: " << x.i << "	" << x.j << endl << endl;
+		// cout << "EXPLORED: " << explored[i].i <<"	"<< explored[i].j << endl;
+		if(explored[i] == x)
+			return 0;
+	}
+	return 1;
+}
+
+void findpaths(int **map, Coords src, Coords dst, vector<Coords>& path)
+{
+    path.clear();
+    char directions[4] = {'w', 'd', 's', 'a'};
+    // create a queue which stores
+    // the paths
+    queue<vector<Coords> > q;
+ 
+    // path vector to store the current path
+    // vector<Coords> path;
+    path.push_back(src);
+    q.push(path);
+    while (!q.empty()) {
+        path = q.front();
+        q.pop();
+        Coords last = path[path.size() - 1];
+ 
+        // if last vertex is the desired destination
+        // then print the path
+        if (last == dst){
+            // return path;
+            break;
+        }
+ 
+
+ 
+        // traverse to all the nodes connected to
+        // current vertex and push new path to queue
+        for (int i = 0; i < 4; i++) {
+            Coords childCell;
+            if(!isThereWall(map, last, directions[i])){
+	// cout << "BIROON " << currentCell.i << "  " << currentCell.j << endl;
+				if(directions[i] == 'w'){
+					childCell.i = last.i - 1;
+					childCell.j = last.j; 
+				} else if(directions[i] == 'd'){
+					childCell.i = last.i;
+					childCell.j = last.j + 1; 
+				} else if(directions[i] == 's'){
+					childCell.i = last.i + 1;
+					childCell.j = last.j; 
+				} else if(directions[i] == 'a'){
+					childCell.i = last.i;
+					childCell.j = last.j - 1; 
+				}
+            if (isNotVisited(childCell, path)) {
+                vector<Coords> newpath(path);
+                newpath.push_back(childCell);
+                q.push(newpath);
+            }
+        }
+    }
+}
+}
 
 
-void chooseTargetPoint(Ghost &ghost, int ghostNumber, Coords pacman, int n, int m, char pacmanDir,
+void newMove(int **&map, Ghost &ghost, Coords target){
+	map[ghost.coords.i][ghost.coords.j] = ghost.previousStatus;
+	if(map[ghost.coords.i][ghost.coords.j] != -2 && map[ghost.coords.i][ghost.coords.j] != 2){
+		    	ghost.previousStatus = map[ghost.coords.i][ghost.coords.j];
+		}
+	map[target.i][target.j] = -2;
+	ghost.coords = target;
+
+}
+
+Coords chooseTargetPoint(Ghost ghost, int ghostNumber, Coords pacman, int n, int m, char pacmanDir,
 						 Coords blinky, Coords pinkyTargetPoint){
 	
 	int xDist = abs(blinky.i - pinkyTargetPoint.i);
 	int yDist = abs(blinky.j - pinkyTargetPoint.j);
-	// ghost.mode = 'c';
+	
+	Coords newTargetPoint = ghost.targetPoint;
 	if(ghost.mode == 's'){
-		switch (ghostNumber)
-		{
-		case 1:
-			// if(ghost.targetPoint.i == n - 2 || ghost.targetPoint.j == m - 2 ||
-			//  getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ 
-				// int random = rand();
-				// ghost.targetPoint.i = random % (n-1);
-				// ghost.targetPoint.j = random % (m-1);
-			//  			usleep(1000000);
-			//  } else if(!(ghost.targetPoint.i == n - 2 || ghost.targetPoint.j == m - 2) ||
-			//  			getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ //target point: bottom right
-			// 			ghost.targetPoint.i = n - 2;
-			// 			ghost.targetPoint.j = m - 2;
-			// 		}
-			break;
-
-		case 2:
-			if(ghost.targetPoint.i == 1 && ghost.targetPoint.j == m - 2 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ 
-				int random = rand();
-				ghost.targetPoint.i = random % (n-1);
-				ghost.targetPoint.j = random % (m-1);
-			 } else if(!(ghost.targetPoint.i == 1 && ghost.targetPoint.j == m - 2) &&
-			 			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ //target point: top right
-						ghost.targetPoint.i = 1;
-						ghost.targetPoint.j = m - 2;
-					}
-			break;
-
-		case 3:
-			if(ghost.targetPoint.i == 1 && ghost.targetPoint.j == 1 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
-				int random = rand();
-				ghost.targetPoint.i = random % (n-1);
-				ghost.targetPoint.j = random % (m-1);
-			 } else if(!(ghost.targetPoint.i == 1 && ghost.targetPoint.j == 2) &&
-			 			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){//target point: top left
-						ghost.targetPoint.i = 1;
-						ghost.targetPoint.j = 1;
-					}
-			break;
-
-		case 4:
-			if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
-			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
-				int random = rand();
-				ghost.targetPoint.i = random % (n-1);
-				ghost.targetPoint.j = random % (m-1);
-			 } else if(!(ghost.targetPoint.i == n - 1 && ghost.targetPoint.j == 1) &&
-			 			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){//target point: bottom left
-						ghost.targetPoint.i = n - 2;
-						ghost.targetPoint.j = 1;
-					}
-			break;
+		switch(ghostNumber){
+			case 1:
+				newTargetPoint.i = n - 1;
+				newTargetPoint.j = m - 1;
+				break;
+			case 2:
+				newTargetPoint.i = n - 2;
+				newTargetPoint.j = m - 2;
+				break;
+			case 3:
+				newTargetPoint.i = n - 2;
+				newTargetPoint.j = m - 2;
+				break;
+			case 4:
+				newTargetPoint.i = n - 2;
+				newTargetPoint.j = m - 2;
+				break;
 		}
 	}
+	// ghost.mode = 'c';
+	// if(ghost.mode == 's'){
+	// 	switch (ghostNumber)
+	// 	{
+	// 	case 1:
+	// 		newTargetPoint.i = n - 2;
+	// 		newTargetPoint.j = m - 2;
+	// 		// if(ghost.targetPoint.i == n - 2 || ghost.targetPoint.j == m - 2 ||
+	// 		//  getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ 
+	// 		// 	int random = rand();
+	// 		// 	newTargetPoint.i = random % (n-1);
+	// 		// 	newTargetPoint.j = random % (m-1);
+	// 		//  			usleep(1000000);
+	// 		//  } else if(!(ghost.targetPoint.i == n - 2 || ghost.targetPoint.j == m - 2) ||
+	// 		//  			getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ //target point: bottom right
+	// 		// 			newTargetPoint.i = n - 2;
+	// 		// 			newTargetPoint.j = m - 2;
+	// 		// 		}
+	// 		break;
 
-	else if(ghost.mode == 'c'){
-		switch (ghostNumber)
-		{
-		case 1:
-			ghost.targetPoint.i = pacman.i;
-			ghost.targetPoint.j = pacman.j;
-			break;
-		case 2:
-			if(pacmanDir == 'w'){
-				ghost.targetPoint.i = pacman.i + 2;
-				ghost.targetPoint.j = pacman.j + 2;
-			}	else if(pacmanDir == 'd'){
-				ghost.targetPoint.i = pacman.i;
-				ghost.targetPoint.j = pacman.j + 2;
-			} else if(pacmanDir == 's'){
-				ghost.targetPoint.i = pacman.i;
-				ghost.targetPoint.j = pacman.j - 2;
-			} else if(pacmanDir == 'a'){
-				ghost.targetPoint.i = pacman.i - 2;
-				ghost.targetPoint.j = pacman.j;
-			}
-			break;
-		case 3:
-			if(blinky.i > pinkyTargetPoint.i){		//flip bliky.i respect to pinkyTragetpoin.i in 180 degree
-				ghost.targetPoint.i = pinkyTargetPoint.i - xDist;
-			} else{
-				ghost.targetPoint.i = pinkyTargetPoint.i + xDist;
-			}
+	// 	case 2:
+	// 		newTargetPoint.i = 1;
+	// 		newTargetPoint.j = m - 2;
+	// 		// if(ghost.targetPoint.i == 1 && ghost.targetPoint.j == m - 2 &&
+	// 		//  getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ 
+	// 		// 	int random = rand();
+	// 		// 	newTargetPoint.i = random % (n-1);
+	// 		// 	newTargetPoint.j = random % (m-1);
+	// 		//  } else if(!(ghost.targetPoint.i == 1 && ghost.targetPoint.j == m - 2) &&
+	// 		//  			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){ //target point: top right
+	// 		// 			newTargetPoint.i = 1;
+	// 		// 			newTargetPoint.j = m - 2;
+	// 		// 		}
+	// 		break;
 
-			if(blinky.j > pinkyTargetPoint.j){ //flip bliky.i respect to pinkyTragetpoin.j in 180 degree
-				ghost.targetPoint.j = pinkyTargetPoint.j - yDist;
-			} else{
-				ghost.targetPoint.j = pinkyTargetPoint.j + yDist;
-			}
-			break;
+	// 	case 3:
+	// 		newTargetPoint.i = 1;
+	// 		newTargetPoint.j = 1;
+	// 		// if(ghost.targetPoint.i == 1 && ghost.targetPoint.j == 1 &&
+	// 		//  getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
+	// 		// 	int random = rand();
+	// 		// 	newTargetPoint.i = random % (n-1);
+	// 		// 	newTargetPoint.j = random % (m-1);
+	// 		//  } else if(!(ghost.targetPoint.i == 1 && ghost.targetPoint.j == 2) &&
+	// 		//  			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){//target point: top left
+	// 		// 			newTargetPoint.i = 1;
+	// 		// 			newTargetPoint.j = 1;
+	// 		// 		}
+	// 		break;
+
+	// 	case 4:
+	// 		newTargetPoint.i = n - 2;
+	// 		newTargetPoint.j = 1;
+	// 		// if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
+	// 		//  getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
+	// 		// 	int random = rand();
+	// 		// 	newTargetPoint.i = random % (n-1);
+	// 		// 	newTargetPoint.j = random % (m-1);
+	// 		//  } else if(!(ghost.targetPoint.i == n - 1 && ghost.targetPoint.j == 1) &&
+	// 		//  			 getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){//target point: bottom left
+	// 		// 			newTargetPoint.i = n - 2;
+	// 		// 			newTargetPoint.j = 1;
+	// 		// 		}
+	// 		break;
+	// 	}
+	// }
+
+	//  else if(ghost.mode == 'c'){
+		newTargetPoint.i = pacman.i;
+		newTargetPoint.j = pacman.j;
+		// switch (ghostNumber)
+		// {
+		// case 1:
+		// 	newTargetPoint.i = pacman.i;
+		// 	newTargetPoint.j = pacman.j;
+		// 	break;
+		// case 2:
+		// 	if(pacmanDir == 'w'){
+		// 		newTargetPoint.i = pacman.i + 2;
+		// 		newTargetPoint.j = pacman.j + 2;
+		// 	}	else if(pacmanDir == 'd'){
+		// 		newTargetPoint.i = pacman.i;
+		// 		newTargetPoint.j = pacman.j + 2;
+		// 	} else if(pacmanDir == 's'){
+		// 		newTargetPoint.i = pacman.i;
+		// 		newTargetPoint.j = pacman.j - 2;
+		// 	} else if(pacmanDir == 'a'){
+		// 		newTargetPoint.i = pacman.i - 2;
+		// 		newTargetPoint.j = pacman.j;
+		// 	}
+		// 	break;
+		// case 3:
+		// 	if(blinky.i > pinkyTargetPoint.i){		//flip bliky.i respect to pinkyTragetpoin.i in 180 degree
+		// 		newTargetPoint.i = pinkyTargetPoint.i - xDist;
+		// 	} else{
+		// 		newTargetPoint.i = pinkyTargetPoint.i + xDist;
+		// 	}
+
+		// 	if(blinky.j > pinkyTargetPoint.j){ //flip bliky.i respect to pinkyTragetpoin.j in 180 degree
+		// 		newTargetPoint.j = pinkyTargetPoint.j - yDist;
+		// 	} else{
+		// 		newTargetPoint.j = pinkyTargetPoint.j + yDist;
+		// 	}
+		// 	break;
 		
 
-		case 4:
-			if(getDist(pacman, ghost.direction, ghost.coords) <= 8){
-				ghost.targetPoint.i = pacman.i;
-				ghost.targetPoint.j = pacman.j;
-			} else if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
-				getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){  //switch to scatter mode movement
-					int random = rand();
-					ghost.targetPoint.i = random % (n-1);
-					ghost.targetPoint.j = random % (m-1);
-			} else if(!(ghost.targetPoint.i == n - 1 && ghost.targetPoint.j == 1) &&
-						getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
-						ghost.targetPoint.i = n - 2;
-						ghost.targetPoint.j = 1;
-					}
-			break;
-		}
-	}
+		// case 4:
+		// 	if(getDist(pacman, ghost.direction, ghost.coords) <= 8){
+		// 		newTargetPoint.i = pacman.i;
+		// 		newTargetPoint.j = pacman.j;
+		// 	} else if(ghost.targetPoint.i == n - 2 && ghost.targetPoint.j == 1 &&
+		// 		getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 1){  //switch to scatter mode movement
+		// 			int random = rand();
+		// 			newTargetPoint.i = random % (n-1);
+		// 			newTargetPoint.j = random % (m-1);
+		// 	} else if(!(ghost.targetPoint.i == n - 1 && ghost.targetPoint.j == 1) &&
+		// 				getDist(ghost.targetPoint, ghost.direction, ghost.coords) <= 3){
+		// 				newTargetPoint.i = n - 2;
+		// 				newTargetPoint.j = 1;
+		// 			}
+		// 	break;
+		// }
+	// }
+
+	return newTargetPoint;
 }
+
+
 
 void updateGhostDirection(int ** map, Ghost &g){
 	int wallsAround = 0;
