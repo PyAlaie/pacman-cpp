@@ -48,6 +48,7 @@ int main(){
 
 			// creating the matrix
 			map = initializeMatrix(n,m);
+	        pacman.lives = 3;
 
 			setPlay(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m);
 			Play(map, pacman, ghost1, ghost2, ghost3, ghost4, n, m, db);

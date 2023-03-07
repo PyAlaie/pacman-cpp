@@ -61,7 +61,6 @@ void setPlay(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &gho
     pacman.coords = pacmanCoor;
     pacman.current_direction = 'd';
     pacman.input_direction = 'd';
-	pacman.lives = 3;
     
     // adding ghosts to some place
     Coords ghost1Coords;
@@ -201,7 +200,7 @@ void Play(int **map, Pacman &pacman, Ghost &ghost1, Ghost &ghost2, Ghost &ghost3
                 ghost4.targetPoint = pacman.coords;
                 findpaths(map, ghost4.coords, ghost4.targetPoint, ghost4.path);
 
-                ghost1.path.erase(ghost4.path.begin());
+                ghost4.path.erase(ghost4.path.begin());
                 newMove(map,ghost4, ghost4.path.front());
             }
         }
@@ -458,9 +457,10 @@ void printMatrix(int **arr, int n, int m, bool &pacmanCheck, int lives, long lon
         }
         else if(i == 1){
             cout << "\t\tLIVES: ";
-            for(int i = 0; i < lives; i++){
+            for(int i = 0; i < pacman.lives; i++){
                 coloredCout("\u2665", "red");
             }
+            // cout<<paclives;
         }
         else if(i == 2){
             cout << "\t\tScore: ";
